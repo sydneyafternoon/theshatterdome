@@ -16,6 +16,20 @@ public class PlayerController {
         this.characterRepository = characterRepository;
     }
 
+    @PostMapping("/update-player-names")
+    public List<Player> updatePlayerNames(@RequestBody List<String> playerNames) {
+        List<Player> players = playerRepository.findAll()
+            .stream()
+            .limit(6)
+            .collect(Collectors.toList());
+
+        for (int i = 0; i < players.size(); i++) {
+            players.get(i).setName(playerNames.get(i));
+            playerRepository.save(players.get(i));
+        }
+        return players;
+    }
+
     @PostMapping("/assign-players")
     public List<Player> assignPlayers(@RequestBody List<String> playerNames) {
         List<Character> characters = characterRepository.findAll();
