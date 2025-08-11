@@ -1,4 +1,4 @@
-package com.theshatterdome.core;
+package com.theshatterdome.core.entity;
 
 import jakarta.persistence.*;
 

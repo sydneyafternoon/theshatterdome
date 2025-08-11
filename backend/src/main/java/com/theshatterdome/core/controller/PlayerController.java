@@ -1,6 +1,12 @@
-package com.theshatterdome.core;
+package com.theshatterdome.core.controller;
 
 import org.springframework.web.bind.annotation.*;
+
+import com.theshatterdome.core.entity.Character;
+import com.theshatterdome.core.entity.Player;
+import com.theshatterdome.core.repository.CharacterRepository;
+import com.theshatterdome.core.repository.PlayerRepository;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
