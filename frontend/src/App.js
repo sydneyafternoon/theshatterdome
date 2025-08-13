@@ -5,6 +5,8 @@ import "./App.css";
 function App() {
   const [players, setPlayers] = useState(["", "", "", "", "", ""]);
   const [assigned, setAssigned] = useState([]);
+  const [turnOrder, setTurnOrder] = useState([]);
+  const [currentTurn, setCurrentTurn] = useState(0);
 
   const handleNameChange = (idx, value) => {
     const updatedPlayers = [...players];
@@ -14,20 +16,29 @@ function App() {
 
   const assignCharacters = async () => {
     try {
-      // First, update player names in the backend
       await axios.post(
         "http://localhost:8080/api/update-player-names",
         players
       );
-      // Then, assign characters
       const response = await axios.post(
         "http://localhost:8080/api/assign-players",
         players
       );
       setAssigned(response.data);
+
+      // Sort players by assigned character's dexterity (descending)
+      const sorted = [...response.data].sort(
+        (a, b) => (b.character?.dexterity || 0) - (a.character?.dexterity || 0)
+      );
+      setTurnOrder(sorted);
+      setCurrentTurn(0);
     } catch (error) {
       setAssigned([{ name: "Error assigning characters" }]);
     }
+  };
+
+  const endTurn = () => {
+    setCurrentTurn((prev) => (prev + 1) % turnOrder.length);
   };
 
   return (
@@ -50,6 +61,17 @@ function App() {
           {player.name} → {player.character?.name || "No character assigned"}
         </div>
       ))}
+      {turnOrder.length > 0 && (
+        <>
+          <h2>Current Turn:</h2>
+          <div>
+            {turnOrder[currentTurn].name} (
+            {turnOrder[currentTurn].character?.name}) - Dexterity:{" "}
+            {turnOrder[currentTurn].character?.dexterity}
+          </div>
+          <button onClick={endTurn}>End Turn</button>
+        </>
+      )}
     </div>
   );
 }
