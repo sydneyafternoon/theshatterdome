@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 
+import DesignChanneling from "./components/DesignChanneling";
+
 function App() {
   const [players, setPlayers] = useState(["", "", "", "", "", ""]);
   const [assigned, setAssigned] = useState([]);
@@ -72,6 +74,7 @@ function App() {
           <button onClick={endTurn}>End Turn</button>
         </>
       )}
+      <DesignChanneling />
     </div>
   );
 }
