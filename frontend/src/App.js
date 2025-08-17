@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import "./App.css";
 
 import DesignChanneling from "./components/DesignChanneling";
+import SpellCasting from "./components/SpellCasting";
 
 function App() {
   const [players, setPlayers] = useState(["", "", "", "", "", ""]);
@@ -71,6 +72,12 @@ function App() {
             {turnOrder[currentTurn].character?.name}) - Dexterity:{" "}
             {turnOrder[currentTurn].character?.dexterity}
           </div>
+          <SpellCasting
+            turnOrder={turnOrder}
+            currentTurn={currentTurn}
+            setTurnOrder={setTurnOrder}
+            setAssigned={setAssigned}
+          />
           <button onClick={endTurn}>End Turn</button>
         </>
       )}
