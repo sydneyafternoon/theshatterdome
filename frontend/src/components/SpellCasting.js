@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function SpellCasting({ turnOrder, currentTurn, setTurnOrder, setAssigned }) {
+function SpellCasting({
+  turnOrder,
+  currentTurn,
+  setTurnOrder,
+  setAssigned,
+  setCurrentTurn,
+}) {
   const [spells, setSpells] = useState([]);
   const [selectedSpell, setSelectedSpell] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
@@ -28,7 +34,7 @@ function SpellCasting({ turnOrder, currentTurn, setTurnOrder, setAssigned }) {
             ...player,
             character: {
               ...player.character,
-              health: player.character.health - (selectedSpell.value || 0),
+              health: player.character.health - 1,
             },
           };
         }
@@ -38,6 +44,7 @@ function SpellCasting({ turnOrder, currentTurn, setTurnOrder, setAssigned }) {
       setAssigned(updatedOrder);
       setSelectedSpell(null);
       setSelectedTarget(null);
+      setCurrentTurn((prev) => (prev + 1) % turnOrder.length);
     }
   };
 

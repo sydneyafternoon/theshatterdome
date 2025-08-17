@@ -77,6 +77,7 @@ function App() {
             currentTurn={currentTurn}
             setTurnOrder={setTurnOrder}
             setAssigned={setAssigned}
+            setCurrentTurn={setCurrentTurn}
           />
           <button onClick={endTurn}>End Turn</button>
         </>
