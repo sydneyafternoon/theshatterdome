@@ -20,7 +20,7 @@ public class ChannelingController {
                     prompt,
                     null);
 
-            System.out.println(response.text());
+            // System.out.println(response.text());
             return response.text();
         }
     }
