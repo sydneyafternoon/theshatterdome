@@ -14,6 +14,7 @@ public class Character {
     private String characterClass;
     private int health;
     private int dexterity;
+    private int team;
 
     // Getters and setters
     public int getId() { return id; }
@@ -30,4 +31,7 @@ public class Character {
 
     public int getDexterity() { return dexterity; }
     public void setDexterity(int dexterity) { this.dexterity = dexterity; }
+
+    public int getTeam() { return team; }
+    public void setTeam(int team) { this.team = team; }
 }
