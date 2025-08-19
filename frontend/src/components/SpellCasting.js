@@ -30,11 +30,20 @@ function SpellCasting({
     if (selectedSpell && selectedTarget !== null) {
       const updatedOrder = turnOrder.map((player, idx) => {
         if (idx === selectedTarget) {
+          let healthChange = 0;
+          if (selectedSpell.type?.id === 1) {
+            // Attack: deduct health by 1
+            healthChange = -1;
+          } else if (selectedSpell.type?.id === 4) {
+            // Heal: increase health by 1
+            healthChange = 1;
+          }
+          // For type id 3 and 4, do nothing
           return {
             ...player,
             character: {
               ...player.character,
-              health: player.character.health - 1,
+              health: player.character.health + healthChange,
             },
           };
         }
