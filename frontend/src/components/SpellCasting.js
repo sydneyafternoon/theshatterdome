@@ -65,21 +65,48 @@ function SpellCasting({
       {selectedSpell && (
         <div>
           <h4>Select Target:</h4>
-          {turnOrder.map((player, idx) =>
-            idx !== currentTurn ? (
-              <button
-                key={idx}
-                onClick={() => setSelectedTarget(idx)}
-                style={{
-                  marginRight: "8px",
-                  background: selectedTarget === idx ? "#ddd" : "",
-                }}
-              >
-                {player.name} ({player.character?.name}) | Health:{" "}
-                {player.character?.health}
-              </button>
-            ) : null
-          )}
+          {turnOrder.map((player, idx) => {
+            if (idx === currentTurn) return null;
+            // Attack or penalty: type id 1 or 2 → different team
+            if (
+              (selectedSpell.type?.id === 1 || selectedSpell.type?.id === 2) &&
+              player.character?.team !== currentPlayer.character?.team
+            ) {
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedTarget(idx)}
+                  style={{
+                    marginRight: "8px",
+                    background: selectedTarget === idx ? "#ddd" : "",
+                  }}
+                >
+                  {player.name} ({player.character?.name}) | Health:{" "}
+                  {player.character?.health}
+                </button>
+              );
+            }
+            // Bonus or heal: type id 3 or 4 → same team
+            if (
+              (selectedSpell.type?.id === 3 || selectedSpell.type?.id === 4) &&
+              player.character?.team === currentPlayer.character?.team
+            ) {
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedTarget(idx)}
+                  style={{
+                    marginRight: "8px",
+                    background: selectedTarget === idx ? "#ddd" : "",
+                  }}
+                >
+                  {player.name} ({player.character?.name}) | Health:{" "}
+                  {player.character?.health}
+                </button>
+              );
+            }
+            return null;
+          })}
           {selectedTarget !== null && (
             <div>
               <button onClick={castSpell}>
