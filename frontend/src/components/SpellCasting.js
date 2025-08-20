@@ -102,9 +102,29 @@ function SpellCasting({
                 </button>
               );
             }
-            // Bonus or heal: type id 3 or 4 → same team
+            // Heal: type id 4 → same team and not full health
             if (
-              (selectedSpell.type?.id === 3 || selectedSpell.type?.id === 4) &&
+              selectedSpell.type?.id === 4 &&
+              player.character?.team === currentPlayer.character?.team &&
+              player.character?.health < player.character?.full_health
+            ) {
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedTarget(idx)}
+                  style={{
+                    marginRight: "8px",
+                    background: selectedTarget === idx ? "#ddd" : "",
+                  }}
+                >
+                  {player.name} ({player.character?.name}) | Health:{" "}
+                  {player.character?.health}
+                </button>
+              );
+            }
+            // Bonus: type id 3 → same team (no health check)
+            if (
+              selectedSpell.type?.id === 3 &&
               player.character?.team === currentPlayer.character?.team
             ) {
               return (
@@ -123,6 +143,7 @@ function SpellCasting({
             }
             return null;
           })}
+
           {selectedTarget !== null && (
             <div>
               <button onClick={castSpell}>
