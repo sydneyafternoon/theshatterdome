@@ -12,7 +12,9 @@ import com.theshatterdome.core.repository.CharacterRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class CharacterController {
