@@ -62,17 +62,24 @@ function SpellCasting({
   return (
     <div>
       <h3>Spells:</h3>
-      {spells.map((spell, idx) => (
-        <button
-          key={idx}
-          onClick={() => setSelectedSpell(spell)}
-          style={{ marginRight: "8px" }}
-        >
-          {spell.name}
-        </button>
-      ))}
+      {!selectedSpell &&
+        spells.map((spell, idx) => (
+          <button
+            key={idx}
+            onClick={() => setSelectedSpell(spell)}
+            style={{ marginRight: "8px" }}
+          >
+            {spell.name}
+          </button>
+        ))}
       {selectedSpell && (
         <div>
+          <button
+            onClick={() => setSelectedSpell(null)}
+            style={{ marginBottom: "1em" }}
+          >
+            ← Back to Spells
+          </button>
           <h4>Select Target:</h4>
           {turnOrder.map((player, idx) => {
             if (idx === currentTurn) return null;
