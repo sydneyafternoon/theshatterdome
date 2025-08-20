@@ -26,6 +26,12 @@ function SpellCasting({
     }
   }, [currentPlayer]);
 
+  // Prevent back button from retaining after entering new turn
+  useEffect(() => {
+    setSelectedSpell(null);
+    setSelectedTarget(null);
+  }, [currentTurn]);
+
   const castSpell = async () => {
     if (selectedSpell && selectedTarget !== null) {
       const targetPlayer = turnOrder[selectedTarget];
