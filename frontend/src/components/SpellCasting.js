@@ -26,24 +26,37 @@ function SpellCasting({
     }
   }, [currentPlayer]);
 
-  const castSpell = () => {
+  const castSpell = async () => {
     if (selectedSpell && selectedTarget !== null) {
+      const targetPlayer = turnOrder[selectedTarget];
+      let healthChange = 0;
+      if (selectedSpell.type?.id === 1) {
+        healthChange = -1;
+      } else if (selectedSpell.type?.id === 4) {
+        healthChange = 1;
+      }
+
+      const newHealth = targetPlayer.character.health + healthChange;
+
+      try {
+        // Persist the health change in the backend
+        await axios.put(
+          `http://localhost:8080/api/character/${targetPlayer.character.id}/health`,
+          newHealth, // this is a JS number, which Axios will send as JSON
+          { headers: { "Content-Type": "application/json" } }
+        );
+      } catch (error) {
+        console.error("Failed to update health:", error);
+        alert("Failed to update health. Please try again.");
+      }
+
       const updatedOrder = turnOrder.map((player, idx) => {
         if (idx === selectedTarget) {
-          let healthChange = 0;
-          if (selectedSpell.type?.id === 1) {
-            // Attack: deduct health by 1
-            healthChange = -1;
-          } else if (selectedSpell.type?.id === 4) {
-            // Heal: increase health by 1
-            healthChange = 1;
-          }
-          // For type id 3 and 4, do nothing
           return {
             ...player,
             character: {
               ...player.character,
-              health: player.character.health + healthChange,
+              health: newHealth,
             },
           };
         }
