@@ -13,8 +13,11 @@ public class Character {
     @Column(name = "class")
     private String characterClass;
     private int health;
+    @Column(name = "full_health")
+    private int fullHeath;
     private int dexterity;
     private int team;
+    private int status;
 
     // Getters and setters
     public int getId() { return id; }
@@ -29,9 +32,15 @@ public class Character {
     public int getHealth() { return health; }
     public void setHealth(int health) { this.health = health; }
 
+    public int getFullHealth() { return fullHeath; }
+    public void setFullHealth(int fullHeath) { this.fullHeath = fullHeath; }
+
     public int getDexterity() { return dexterity; }
     public void setDexterity(int dexterity) { this.dexterity = dexterity; }
 
     public int getTeam() { return team; }
     public void setTeam(int team) { this.team = team; }
+
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
 }

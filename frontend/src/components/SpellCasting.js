@@ -125,7 +125,7 @@ function SpellCasting({
             if (
               selectedSpell.type?.id === 4 &&
               player.character?.team === currentPlayer.character?.team &&
-              player.character?.health < player.character?.full_health
+              player.character?.health < player.character?.fullHealth
             ) {
               return (
                 <button
