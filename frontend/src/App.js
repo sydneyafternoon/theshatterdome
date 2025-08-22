@@ -4,6 +4,7 @@ import "./App.css";
 
 import DesignChanneling from "./components/DesignChanneling";
 import SpellCasting from "./components/SpellCasting";
+import RestartGame from "./components/Restart";
 
 function App() {
   const [players, setPlayers] = useState(["", "", "", "", "", ""]);
@@ -58,6 +59,12 @@ function App() {
         </div>
       ))}
       <button onClick={assignCharacters}>Assign Characters</button>
+      <RestartGame
+        setAssigned={setAssigned}
+        setTurnOrder={setTurnOrder}
+        setCurrentTurn={setCurrentTurn}
+        setPlayers={setPlayers}
+      />
       <h2>Assigned:</h2>
       {assigned.map((player, idx) => (
         <div key={idx}>

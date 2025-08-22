@@ -45,4 +45,14 @@ public class CharacterController {
         character.setStatus(status);
         return characterRepository.save(character);
     }
+
+    @PutMapping("/characters/reset")
+    public void resetAllCharacters() {
+        List<Character> characters = characterRepository.findAll();
+        for (Character character : characters) {
+            character.setHealth(character.getFullHealth());
+            character.setStatus(0);
+            characterRepository.save(character);
+        }
+    }
 }
