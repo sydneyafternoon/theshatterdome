@@ -37,4 +37,12 @@ public class CharacterController {
         character.setHealth(health);
         return characterRepository.save(character);
     }
+
+    @PutMapping("/character/{id}/status")
+    public Character updateStatus(@PathVariable int id, @RequestBody int status) {
+        Character character = characterRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Character not found"));
+        character.setStatus(status);
+        return characterRepository.save(character);
+    }
 }

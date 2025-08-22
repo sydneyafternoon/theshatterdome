@@ -36,24 +36,40 @@ function SpellCasting({
     if (selectedSpell && selectedTarget !== null) {
       const targetPlayer = turnOrder[selectedTarget];
       let healthChange = 0;
+      let statusUpdate = null;
+
       if (selectedSpell.type?.id === 1) {
         healthChange = -1;
       } else if (selectedSpell.type?.id === 4) {
         healthChange = 1;
+      } else if (selectedSpell.type?.id === 2) {
+        statusUpdate = 1;
+      } else if (selectedSpell.type?.id === 3) {
+        statusUpdate = 2;
       }
 
       const newHealth = targetPlayer.character.health + healthChange;
 
       try {
-        // Persist the health change in the backend
-        await axios.put(
-          `http://localhost:8080/api/character/${targetPlayer.character.id}/health`,
-          newHealth, // this is a JS number, which Axios will send as JSON
-          { headers: { "Content-Type": "application/json" } }
-        );
+        // Persist health change if applicable
+        if (selectedSpell.type?.id === 1 || selectedSpell.type?.id === 4) {
+          await axios.put(
+            `http://localhost:8080/api/character/${targetPlayer.character.id}/health`,
+            newHealth,
+            { headers: { "Content-Type": "application/json" } }
+          );
+        }
+        // Persist status change if applicable
+        if (statusUpdate !== null) {
+          await axios.put(
+            `http://localhost:8080/api/character/${targetPlayer.character.id}/status`,
+            statusUpdate,
+            { headers: { "Content-Type": "application/json" } }
+          );
+        }
       } catch (error) {
-        console.error("Failed to update health:", error);
-        alert("Failed to update health. Please try again.");
+        console.error("Failed to update character:", error);
+        alert("Failed to update character. Please try again.");
       }
 
       const updatedOrder = turnOrder.map((player, idx) => {
@@ -62,7 +78,12 @@ function SpellCasting({
             ...player,
             character: {
               ...player.character,
-              health: newHealth,
+              health:
+                selectedSpell.type?.id === 1 || selectedSpell.type?.id === 4
+                  ? newHealth
+                  : player.character.health,
+              status:
+                statusUpdate !== null ? statusUpdate : player.character.status,
             },
           };
         }
