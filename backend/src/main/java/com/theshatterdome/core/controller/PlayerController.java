@@ -10,6 +10,7 @@ import com.theshatterdome.core.repository.PlayerRepository;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class PlayerController {
