@@ -10,6 +10,8 @@ function RestartGameButton({
   const handleRestart = async () => {
     // Reset all characters' health and status in backend
     await axios.put("http://localhost:8080/api/characters/reset");
+    // Reset all player assignments in backend
+    await axios.put("http://localhost:8080/api/players/reset");
 
     // Reset frontend state
     setAssigned([]);

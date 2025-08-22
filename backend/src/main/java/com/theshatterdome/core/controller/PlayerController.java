@@ -25,9 +25,9 @@ public class PlayerController {
     @PostMapping("/update-player-names")
     public List<Player> updatePlayerNames(@RequestBody List<String> playerNames) {
         List<Player> players = playerRepository.findAll()
-            .stream()
-            .limit(6)
-            .collect(Collectors.toList());
+                .stream()
+                .limit(6)
+                .collect(Collectors.toList());
 
         for (int i = 0; i < players.size(); i++) {
             players.get(i).setName(playerNames.get(i));
@@ -42,14 +42,24 @@ public class PlayerController {
         Collections.shuffle(characters);
 
         List<Player> players = playerRepository.findAll()
-            .stream()
-            .limit(6)
-            .collect(Collectors.toList());
+                .stream()
+                .limit(6)
+                .collect(Collectors.toList());
 
         for (int i = 0; i < players.size(); i++) {
             players.get(i).setCharacter(characters.get(i % characters.size()));
             playerRepository.save(players.get(i));
         }
         return players;
+    }
+
+    @PutMapping("/players/reset")
+    public void resetPlayers() {
+        List<Player> players = playerRepository.findAll();
+        for (Player player : players) {
+            player.setCharacter(null);
+            player.setName("");
+            playerRepository.save(player);
+        }
     }
 }
