@@ -72,7 +72,7 @@ function SpellCasting({
         alert("Failed to update character. Please try again.");
       }
 
-      const updatedOrder = turnOrder.map((player, idx) => {
+      let updatedOrder = turnOrder.map((player, idx) => {
         if (idx === selectedTarget) {
           return {
             ...player,
@@ -89,11 +89,28 @@ function SpellCasting({
         }
         return player;
       });
+
+      // Remove players whose health is <= 0
+      updatedOrder = updatedOrder.filter(
+        (player) => player.character.health > 0
+      );
+
+      // Adjust currentTurn if needed
+      let newTurn = currentTurn;
+      if (selectedTarget < currentTurn) {
+        newTurn--;
+      }
+      newTurn = (newTurn + 1) % updatedOrder.length;
+      if (updatedOrder.length === 1) {
+        // handle game over logic here if needed
+        return;
+      }
+
       setTurnOrder(updatedOrder);
       setAssigned(updatedOrder);
       setSelectedSpell(null);
       setSelectedTarget(null);
-      setCurrentTurn((prev) => (prev + 1) % turnOrder.length);
+      setCurrentTurn(newTurn);
     }
   };
 
