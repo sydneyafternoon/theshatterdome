@@ -106,6 +106,7 @@ function SpellCasting({
       if (remainingTeams.length === 1) {
         setGameOver(true);
         setWinner(remainingTeams[0]);
+        setAssigned(updatedOrder);
         return;
       }
 
