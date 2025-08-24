@@ -6,6 +6,7 @@ function RestartGameButton({
   setTurnOrder,
   setCurrentTurn,
   setPlayers,
+  setGameOver,
 }) {
   const handleRestart = async () => {
     // Reset all characters' health and status in backend
@@ -18,6 +19,7 @@ function RestartGameButton({
     setTurnOrder([]);
     setCurrentTurn(0);
     setPlayers(["", "", "", "", "", ""]);
+    setGameOver(false);
   };
 
   return (

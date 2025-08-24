@@ -65,6 +65,7 @@ function App() {
         setTurnOrder={setTurnOrder}
         setCurrentTurn={setCurrentTurn}
         setPlayers={setPlayers}
+        setGameOver={setGameOver}
       />
       <h2>Assigned:</h2>
       {assigned.map((player, idx) => (
