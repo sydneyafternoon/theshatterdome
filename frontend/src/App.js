@@ -11,6 +11,7 @@ function App() {
   const [assigned, setAssigned] = useState([]);
   const [turnOrder, setTurnOrder] = useState([]);
   const [currentTurn, setCurrentTurn] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
 
   const handleNameChange = (idx, value) => {
     const updatedPlayers = [...players];
@@ -85,8 +86,10 @@ function App() {
             setTurnOrder={setTurnOrder}
             setAssigned={setAssigned}
             setCurrentTurn={setCurrentTurn}
+            gameOver={gameOver}
+            setGameOver={setGameOver}
           />
-          <button onClick={endTurn}>End Turn</button>
+          {!gameOver && <button onClick={endTurn}>End Turn</button>}
         </>
       )}
       <DesignChanneling />

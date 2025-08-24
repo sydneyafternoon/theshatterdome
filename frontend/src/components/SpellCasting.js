@@ -7,10 +7,13 @@ function SpellCasting({
   setTurnOrder,
   setAssigned,
   setCurrentTurn,
+  gameOver,
+  setGameOver,
 }) {
   const [spells, setSpells] = useState([]);
   const [selectedSpell, setSelectedSpell] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
+  const [winner, setWinner] = useState(null);
 
   const currentPlayer = turnOrder[currentTurn];
 
@@ -95,16 +98,22 @@ function SpellCasting({
         (player) => player.character.health > 0
       );
 
+      // Check if only one team remains
+      const remainingTeams = [
+        ...new Set(updatedOrder.map((player) => player.character.team)),
+      ];
+      if (remainingTeams.length === 1) {
+        setGameOver(true);
+        setWinner(remainingTeams[0]);
+        return;
+      }
+
       // Adjust currentTurn if needed
       let newTurn = currentTurn;
       if (selectedTarget < currentTurn) {
         newTurn--;
       }
       newTurn = (newTurn + 1) % updatedOrder.length;
-      if (updatedOrder.length === 1) {
-        // handle game over logic here if needed
-        return;
-      }
 
       setTurnOrder(updatedOrder);
       setAssigned(updatedOrder);
@@ -115,6 +124,15 @@ function SpellCasting({
   };
 
   if (!spells.length) return null;
+
+  if (gameOver) {
+    return (
+      <div>
+        <h2>Game Over!</h2>
+        <p>{winner} won.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
