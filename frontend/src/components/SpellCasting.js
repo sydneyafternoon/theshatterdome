@@ -94,6 +94,7 @@ function SpellCasting({
       });
 
       // Remove players whose health is <= 0
+      const targetCharId = targetPlayer.character.id;
       updatedOrder = updatedOrder.filter(
         (player) => player.character.health > 0
       );
@@ -108,12 +109,16 @@ function SpellCasting({
         return;
       }
 
-      // Adjust currentTurn if needed
-      let newTurn = currentTurn;
-      if (selectedTarget < currentTurn) {
-        newTurn--;
+      // Move to next turn
+      let newTurn;
+      if (
+        updatedOrder.findIndex((p) => p.character.id === targetCharId) === -1 &&
+        selectedTarget < currentTurn
+      ) {
+        newTurn = currentTurn;
+      } else {
+        newTurn = currentTurn + 1 >= updatedOrder.length ? 0 : currentTurn + 1;
       }
-      newTurn = (newTurn + 1) % updatedOrder.length;
 
       setTurnOrder(updatedOrder);
       setAssigned(updatedOrder);
