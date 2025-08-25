@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+import { DesignChanneling } from "./DesignChanneling";
+
 function SpellCasting({
   turnOrder,
   currentTurn,
@@ -14,6 +16,9 @@ function SpellCasting({
   const [selectedSpell, setSelectedSpell] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
   const [winner, setWinner] = useState(null);
+  const [question, setQuestion] = useState("");
+  const [showChanneling, setShowChanneling] = useState(false);
+  const [channelingResult, setChannelingResult] = useState(""); // "success" or "failed"
 
   const currentPlayer = turnOrder[currentTurn];
 
@@ -37,6 +42,26 @@ function SpellCasting({
 
   const castSpell = async () => {
     if (selectedSpell && selectedTarget !== null) {
+      setQuestion("");
+      setShowChanneling(true);
+      setChannelingResult("");
+      const question = await DesignChanneling();
+      setQuestion(question);
+    }
+  };
+
+  const handleChannelingResponse = async (isOk) => {
+    if (selectedSpell && selectedTarget !== null) {
+      setShowChanneling(false);
+      if (!isOk) {
+        setChannelingResult("failed");
+        setSelectedSpell(null);
+        setSelectedTarget(null);
+        setCurrentTurn(currentTurn + 1);
+        return;
+      }
+
+      // Proceed with spell casting logic
       const targetPlayer = turnOrder[selectedTarget];
       let healthChange = 0;
       let statusUpdate = null;
@@ -233,6 +258,34 @@ function SpellCasting({
             </div>
           )}
         </div>
+      )}
+
+      {showChanneling && (
+        <div
+          style={{ marginTop: "1em", padding: "1em", border: "1px solid #ccc" }}
+        >
+          <div>
+            <strong>Channeling Question:</strong>
+            <div style={{ margin: "1em 0" }}>{question || "Loading..."}</div>
+          </div>
+          <button
+            onClick={() => handleChannelingResponse(true)}
+            style={{ marginRight: "1em" }}
+          >
+            OK
+          </button>
+          <button onClick={() => handleChannelingResponse(false)}>
+            Not OK
+          </button>
+        </div>
+      )}
+
+      {/* Result message */}
+      {channelingResult === "success" && (
+        <div style={{ color: "green", marginTop: "1em" }}>Success!</div>
+      )}
+      {channelingResult === "failed" && (
+        <div style={{ color: "red", marginTop: "1em" }}>Failed!</div>
       )}
     </div>
   );

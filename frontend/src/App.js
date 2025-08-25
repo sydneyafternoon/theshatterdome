@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 
-import DesignChanneling from "./components/DesignChanneling";
 import SpellCasting from "./components/SpellCasting";
 import RestartGame from "./components/Restart";
 
@@ -93,7 +92,6 @@ function App() {
           {!gameOver && <button onClick={endTurn}>End Turn</button>}
         </>
       )}
-      <DesignChanneling />
     </div>
   );
 }
