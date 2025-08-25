@@ -57,7 +57,9 @@ function SpellCasting({
         setChannelingResult("failed");
         setSelectedSpell(null);
         setSelectedTarget(null);
-        setCurrentTurn(currentTurn + 1);
+        setCurrentTurn(
+          currentTurn + 1 >= turnOrder.length ? 0 : currentTurn + 1
+        );
         return;
       }
 
