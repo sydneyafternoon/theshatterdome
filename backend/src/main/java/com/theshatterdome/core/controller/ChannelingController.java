@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api")
 public class ChannelingController {
