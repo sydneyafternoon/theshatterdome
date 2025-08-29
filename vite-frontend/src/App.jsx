@@ -37,7 +37,7 @@ function App() {
       setTurnOrder(sorted);
       setCurrentTurn(0);
     } catch (error) {
-      setAssigned([{ name: "Error assigning characters" }]);
+      setAssigned([{ name: error.message }]);
     }
   };
 
