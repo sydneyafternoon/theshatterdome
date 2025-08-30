@@ -1,3 +1,11 @@
 *.js linguist-language=JavaScript
 *.jsx linguist-language=JavaScript
 *.java linguist-language=Java
+
+# Exclude build, generated, and dependency files from stats
+backend/build/** linguist-generated
+backend/.gradle/** linguist-generated
+vite-frontend/build/** linguist-generated
+vite-frontend/dist/** linguist-generated
+vite-frontend/public/** linguist-generated
+vite-frontend/node_modules/** linguist-vendored
