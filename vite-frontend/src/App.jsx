@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
@@ -8,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SpellCasting from "./components/SpellCasting.jsx";
 import RestartGame from "./components/Restart.jsx";
-
 
 function App() {
   const [players, setPlayers] = useState(["", "", "", "", "", ""]);
@@ -68,7 +66,12 @@ function App() {
               />
             ))}
           </div>
-          <Button onClick={assignCharacters} className="w-full mb-2">Assign Characters</Button>
+          <Button
+            onClick={assignCharacters}
+            className="w-full mb-2 transition-transform duration-150 hover:scale-100 active:scale-95"
+          >
+            Assign Characters
+          </Button>
           <RestartGame
             setAssigned={setAssigned}
             setTurnOrder={setTurnOrder}
@@ -85,12 +88,19 @@ function App() {
         </CardHeader>
         <CardContent>
           {assigned.length === 0 ? (
-            <div className="text-muted-foreground">No characters assigned yet.</div>
+            <div className="text-muted-foreground">
+              No characters assigned yet.
+            </div>
           ) : (
             assigned.map((player, idx) => (
-              <div key={idx} className="flex items-center justify-between py-1 border-b last:border-b-0">
+              <div
+                key={idx}
+                className="flex items-center justify-between py-1 border-b last:border-b-0"
+              >
                 <span className="font-medium">{player.name}</span>
-                <span className="ml-2">→ {player.character?.name || "No character assigned"}</span>
+                <span className="ml-2">
+                  → {player.character?.name || "No character assigned"}
+                </span>
               </div>
             ))
           )}
@@ -105,7 +115,8 @@ function App() {
           <CardContent>
             <div className="mb-4 p-2 rounded bg-card text-card-foreground">
               <span className="font-bold">{turnOrder[currentTurn].name}</span> (
-              {turnOrder[currentTurn].character?.name}) - Dexterity: {turnOrder[currentTurn].character?.dexterity}
+              {turnOrder[currentTurn].character?.name}) - Dexterity:{" "}
+              {turnOrder[currentTurn].character?.dexterity}
             </div>
             <SpellCasting
               turnOrder={turnOrder}
@@ -117,7 +128,9 @@ function App() {
               setGameOver={setGameOver}
             />
             {!gameOver && (
-              <Button onClick={endTurn} className="mt-4 w-full">End Turn</Button>
+              <Button onClick={endTurn} className="mt-4 w-full">
+                End Turn
+              </Button>
             )}
           </CardContent>
         </Card>
