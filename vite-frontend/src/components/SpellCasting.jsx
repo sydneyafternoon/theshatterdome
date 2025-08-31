@@ -127,7 +127,6 @@ function SpellCasting({
       });
 
       // Remove players whose health is <= 0
-      const targetCharId = targetPlayer.character.id;
       updatedOrder = updatedOrder.filter(
         (player) => player.character.health > 0
       );
@@ -144,23 +143,22 @@ function SpellCasting({
       }
 
       // Move to next turn after 1 second
+      const newCurrentIndex = updatedOrder.findIndex(p => p.character.id === currentPlayer.character.id);
       let newTurn;
-      if (
-        updatedOrder.findIndex((p) => p.character.id === targetCharId) === -1 &&
-        selectedTarget < currentTurn
-      ) {
-        newTurn = currentTurn;
+      if (newCurrentIndex === -1) {
+        // Current player was removed (shouldn't happen, but safety)
+        newTurn = 0;
       } else {
-        newTurn = currentTurn + 1 >= updatedOrder.length ? 0 : currentTurn + 1;
+        newTurn = (newCurrentIndex + 1) % updatedOrder.length;
       }
 
       setTurnOrder(updatedOrder);
       setAssigned(updatedOrder);
       setSelectedSpell(null);
       setSelectedTarget(null);
+      setCurrentTurn(newTurn);
       setTimeout(() => {
         setChannelingResult("");
-        setCurrentTurn(newTurn);
       }, 1000);
     }
   };
@@ -169,14 +167,10 @@ function SpellCasting({
 
   if (gameOver) {
     return (
-      <Card className="w-full max-w-xl mx-auto my-4">
-        <CardHeader>
-          <h2 className="text-2xl font-bold text-center">Game Over!</h2>
-        </CardHeader>
-        <CardContent>
-          <p className="text-center text-lg">{winner} won.</p>
-        </CardContent>
-      </Card>
+      <div className="w-full max-w-xl mx-auto my-4 p-6 border border-gray-200 rounded-lg bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700">
+        <h2 className="text-2xl font-bold text-center mb-4">Game Over!</h2>
+        <p className="text-center text-lg">{winner} won.</p>
+      </div>
     );
   }
 
