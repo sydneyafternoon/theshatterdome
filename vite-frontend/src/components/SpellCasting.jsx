@@ -47,8 +47,9 @@ function SpellCasting({
       setQuestion("");
       setShowChanneling(true);
       setChannelingResult("");
-      const question = await DesignChanneling();
-      setQuestion(question);
+      // const question = await DesignChanneling();
+      // setQuestion(question);
+      setQuestion("this is a dummy question");
     }
   };
 
