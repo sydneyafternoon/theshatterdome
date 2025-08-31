@@ -39,6 +39,7 @@ function SpellCasting({
   useEffect(() => {
     setSelectedSpell(null);
     setSelectedTarget(null);
+    setChannelingResult("");
   }, [currentTurn]);
 
   const castSpell = async () => {
@@ -56,15 +57,19 @@ function SpellCasting({
       setShowChanneling(false);
       if (!isOk) {
         setChannelingResult("failed");
-        setSelectedSpell(null);
-        setSelectedTarget(null);
-        setCurrentTurn(
-          currentTurn + 1 >= turnOrder.length ? 0 : currentTurn + 1
-        );
+        setTimeout(() => {
+          setSelectedSpell(null);
+          setSelectedTarget(null);
+          setChannelingResult("");
+          setCurrentTurn(
+            currentTurn + 1 >= turnOrder.length ? 0 : currentTurn + 1
+          );
+        }, 1000);
         return;
       }
 
       // Proceed with spell casting logic
+      setChannelingResult("success");
       const targetPlayer = turnOrder[selectedTarget];
       let healthChange = 0;
       let statusUpdate = null;
@@ -138,7 +143,7 @@ function SpellCasting({
         return;
       }
 
-      // Move to next turn
+      // Move to next turn after 1 second
       let newTurn;
       if (
         updatedOrder.findIndex((p) => p.character.id === targetCharId) === -1 &&
@@ -153,7 +158,10 @@ function SpellCasting({
       setAssigned(updatedOrder);
       setSelectedSpell(null);
       setSelectedTarget(null);
-      setCurrentTurn(newTurn);
+      setTimeout(() => {
+        setChannelingResult("");
+        setCurrentTurn(newTurn);
+      }, 1000);
     }
   };
 
