@@ -99,7 +99,7 @@ function App() {
               >
                 <span className="font-medium">{player.name}</span>
                 <span className="ml-2">
-                  → {player.character?.name || "No character assigned"}
+                  {player.character?.name || "No character assigned"}
                 </span>
               </div>
             ))
