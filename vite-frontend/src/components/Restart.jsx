@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { Button } from "./ui/button";
 
 function RestartGameButton({
   setAssigned,
@@ -23,9 +24,13 @@ function RestartGameButton({
   };
 
   return (
-    <button onClick={handleRestart} style={{ margin: "1em 0" }}>
+    <Button
+      onClick={handleRestart}
+      variant="secondary"
+      className="w-full my-2 transition-transform duration-150 hover:scale-100 active:scale-95 hover:bg-secondary/70 active:bg-secondary/80"
+    >
       Restart Game
-    </button>
+    </Button>
   );
 }
 
