@@ -1,9 +1,14 @@
+
 import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
 
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import SpellCasting from "./components/SpellCasting.jsx";
 import RestartGame from "./components/Restart.jsx";
+
 
 function App() {
   const [players, setPlayers] = useState(["", "", "", "", "", ""]);
@@ -46,51 +51,76 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h2>Players:</h2>
-      {players.map((player, idx) => (
-        <div key={idx}>
-          <input
-            type="text"
-            value={player}
-            onChange={(e) => handleNameChange(idx, e.target.value)}
-            placeholder={`Player ${idx + 1} name`}
-          />
-        </div>
-      ))}
-      <button onClick={assignCharacters}>Assign Characters</button>
-      <RestartGame
-        setAssigned={setAssigned}
-        setTurnOrder={setTurnOrder}
-        setCurrentTurn={setCurrentTurn}
-        setPlayers={setPlayers}
-        setGameOver={setGameOver}
-      />
-      <h2>Assigned:</h2>
-      {assigned.map((player, idx) => (
-        <div key={idx}>
-          {player.name} → {player.character?.name || "No character assigned"}
-        </div>
-      ))}
-      {turnOrder.length > 0 && (
-        <>
-          <h2>Current Turn:</h2>
-          <div>
-            {turnOrder[currentTurn].name} (
-            {turnOrder[currentTurn].character?.name}) - Dexterity:{" "}
-            {turnOrder[currentTurn].character?.dexterity}
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">
+      <Card className="w-full max-w-xl mb-6">
+        <CardHeader>
+          <h2 className="text-2xl font-bold mb-2">Players</h2>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {players.map((player, idx) => (
+              <Input
+                key={idx}
+                value={player}
+                onChange={(e) => handleNameChange(idx, e.target.value)}
+                placeholder={`Player ${idx + 1} name`}
+                className=""
+              />
+            ))}
           </div>
-          <SpellCasting
-            turnOrder={turnOrder}
-            currentTurn={currentTurn}
-            setTurnOrder={setTurnOrder}
+          <Button onClick={assignCharacters} className="w-full mb-2">Assign Characters</Button>
+          <RestartGame
             setAssigned={setAssigned}
+            setTurnOrder={setTurnOrder}
             setCurrentTurn={setCurrentTurn}
-            gameOver={gameOver}
+            setPlayers={setPlayers}
             setGameOver={setGameOver}
           />
-          {!gameOver && <button onClick={endTurn}>End Turn</button>}
-        </>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-xl mb-6">
+        <CardHeader>
+          <h2 className="text-xl font-semibold mb-2">Assigned Characters</h2>
+        </CardHeader>
+        <CardContent>
+          {assigned.length === 0 ? (
+            <div className="text-muted-foreground">No characters assigned yet.</div>
+          ) : (
+            assigned.map((player, idx) => (
+              <div key={idx} className="flex items-center justify-between py-1 border-b last:border-b-0">
+                <span className="font-medium">{player.name}</span>
+                <span className="ml-2">→ {player.character?.name || "No character assigned"}</span>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+
+      {turnOrder.length > 0 && (
+        <Card className="w-full max-w-xl mb-6">
+          <CardHeader>
+            <h2 className="text-xl font-semibold mb-2">Current Turn</h2>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4 p-2 rounded bg-card text-card-foreground">
+              <span className="font-bold">{turnOrder[currentTurn].name}</span> (
+              {turnOrder[currentTurn].character?.name}) - Dexterity: {turnOrder[currentTurn].character?.dexterity}
+            </div>
+            <SpellCasting
+              turnOrder={turnOrder}
+              currentTurn={currentTurn}
+              setTurnOrder={setTurnOrder}
+              setAssigned={setAssigned}
+              setCurrentTurn={setCurrentTurn}
+              gameOver={gameOver}
+              setGameOver={setGameOver}
+            />
+            {!gameOver && (
+              <Button onClick={endTurn} className="mt-4 w-full">End Turn</Button>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );
