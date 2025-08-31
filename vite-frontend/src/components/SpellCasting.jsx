@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { DesignChanneling } from "./DesignChanneling.jsx";
 
 function SpellCasting({
@@ -160,134 +161,120 @@ function SpellCasting({
 
   if (gameOver) {
     return (
-      <div>
-        <h2>Game Over!</h2>
-        <p>{winner} won.</p>
-      </div>
+      <Card className="w-full max-w-xl mx-auto my-4">
+        <CardHeader>
+          <h2 className="text-2xl font-bold text-center">Game Over!</h2>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-lg">{winner} won.</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div>
-      <h3>Spells:</h3>
-      {!selectedSpell &&
-        spells.map((spell, idx) => (
-          <button
-            key={idx}
-            onClick={() => setSelectedSpell(spell)}
-            style={{ marginRight: "8px" }}
-          >
-            {spell.name}
-          </button>
-        ))}
+    <div className="w-full max-w-xl mx-auto my-4">
+      <h3 className="text-xl font-semibold mb-4">Spells</h3>
+      {!selectedSpell && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {spells.map((spell, idx) => (
+            <Button
+              key={idx}
+              variant="outline"
+              onClick={() => setSelectedSpell(spell)}
+            >
+              {spell.name}
+            </Button>
+          ))}
+        </div>
+      )}
       {selectedSpell && (
-        <div>
-          <button
-            onClick={() => setSelectedSpell(null)}
-            style={{ marginBottom: "1em" }}
-          >
+        <div className="mb-4">
+          <Button variant="ghost" onClick={() => setSelectedSpell(null)} className="mb-2">
             ← Back to Spells
-          </button>
-          <h4>Select Target:</h4>
-          {turnOrder.map((player, idx) => {
-            if (idx === currentTurn) return null;
-            // Attack or penalty: type id 1 or 2 → different team
-            if (
-              (selectedSpell.type?.id === 1 || selectedSpell.type?.id === 2) &&
-              player.character?.team !== currentPlayer.character?.team
-            ) {
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedTarget(idx)}
-                  style={{
-                    marginRight: "8px",
-                    background: selectedTarget === idx ? "#ddd" : "",
-                  }}
-                >
-                  {player.name} ({player.character?.name}) | Health:{" "}
-                  {player.character?.health}
-                </button>
-              );
-            }
-            // Heal: type id 4 → same team and not full health
-            if (
-              selectedSpell.type?.id === 4 &&
-              player.character?.team === currentPlayer.character?.team &&
-              player.character?.health < player.character?.fullHealth
-            ) {
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedTarget(idx)}
-                  style={{
-                    marginRight: "8px",
-                    background: selectedTarget === idx ? "#ddd" : "",
-                  }}
-                >
-                  {player.name} ({player.character?.name}) | Health:{" "}
-                  {player.character?.health}
-                </button>
-              );
-            }
-            // Bonus: type id 3 → same team (no health check)
-            if (
-              selectedSpell.type?.id === 3 &&
-              player.character?.team === currentPlayer.character?.team
-            ) {
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedTarget(idx)}
-                  style={{
-                    marginRight: "8px",
-                    background: selectedTarget === idx ? "#ddd" : "",
-                  }}
-                >
-                  {player.name} ({player.character?.name}) | Health:{" "}
-                  {player.character?.health}
-                </button>
-              );
-            }
-            return null;
-          })}
-
+          </Button>
+          <h4 className="font-medium mb-2">Select Target:</h4>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {turnOrder.map((player, idx) => {
+              if (idx === currentTurn) return null;
+              // Attack or penalty: type id 1 or 2 → different team
+              if (
+                (selectedSpell.type?.id === 1 || selectedSpell.type?.id === 2) &&
+                player.character?.team !== currentPlayer.character?.team
+              ) {
+                return (
+                  <Button
+                    key={idx}
+                    variant={selectedTarget === idx ? "default" : "outline"}
+                    onClick={() => setSelectedTarget(idx)}
+                  >
+                    {player.name} ({player.character?.name}) | Health: {player.character?.health}
+                  </Button>
+                );
+              }
+              // Heal: type id 4 → same team and not full health
+              if (
+                selectedSpell.type?.id === 4 &&
+                player.character?.team === currentPlayer.character?.team &&
+                player.character?.health < player.character?.fullHealth
+              ) {
+                return (
+                  <Button
+                    key={idx}
+                    variant={selectedTarget === idx ? "default" : "outline"}
+                    onClick={() => setSelectedTarget(idx)}
+                  >
+                    {player.name} ({player.character?.name}) | Health: {player.character?.health}
+                  </Button>
+                );
+              }
+              // Bonus: type id 3 → same team (no health check)
+              if (
+                selectedSpell.type?.id === 3 &&
+                player.character?.team === currentPlayer.character?.team
+              ) {
+                return (
+                  <Button
+                    key={idx}
+                    variant={selectedTarget === idx ? "default" : "outline"}
+                    onClick={() => setSelectedTarget(idx)}
+                  >
+                    {player.name} ({player.character?.name}) | Health: {player.character?.health}
+                  </Button>
+                );
+              }
+              return null;
+            })}
+          </div>
           {selectedTarget !== null && (
-            <div>
-              <button onClick={castSpell}>
-                Cast {selectedSpell.name} on {turnOrder[selectedTarget].name}
-              </button>
-            </div>
+            <Button onClick={castSpell} className="w-full">
+              Cast {selectedSpell.name} on {turnOrder[selectedTarget].name}
+            </Button>
           )}
         </div>
       )}
 
       {showChanneling && (
-        <div
-          style={{ marginTop: "1em", padding: "1em", border: "1px solid #ccc" }}
-        >
-          <div>
-            <strong>Channeling Question:</strong>
-            <div style={{ margin: "1em 0" }}>{question || "Loading..."}</div>
+        <div className="mt-4 p-4 border rounded bg-muted">
+          <div className="font-semibold mb-2">Channeling Question:</div>
+          <div className="mb-4">{question || "Loading..."}</div>
+          <div className="flex gap-2">
+            <Button onClick={() => handleChannelingResponse(true)}>
+              OK
+            </Button>
+            <Button variant="outline" onClick={() => handleChannelingResponse(false)}>
+              Not OK
+            </Button>
           </div>
-          <button
-            onClick={() => handleChannelingResponse(true)}
-            style={{ marginRight: "1em" }}
-          >
-            OK
-          </button>
-          <button onClick={() => handleChannelingResponse(false)}>
-            Not OK
-          </button>
         </div>
       )}
 
       {/* Result message */}
       {channelingResult === "success" && (
-        <div style={{ color: "green", marginTop: "1em" }}>Success!</div>
+        <div className="text-green-600 font-semibold mt-4">Success!</div>
       )}
       {channelingResult === "failed" && (
-        <div style={{ color: "red", marginTop: "1em" }}>Failed!</div>
+        <div className="text-red-600 font-semibold mt-4">Failed!</div>
       )}
     </div>
   );
