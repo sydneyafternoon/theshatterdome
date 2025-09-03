@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import SpellCasting from "./components/SpellCasting.jsx";
 import RestartGame from "./components/Restart.jsx";
 import ActionLog from "./components/ActionLog.jsx";
+import { useActionLog } from "./hooks/useActionLog.js";
 
 function App() {
   const [players, setPlayers] = useState(["", "", "", "", "", ""]);
@@ -15,17 +16,12 @@ function App() {
   const [turnOrder, setTurnOrder] = useState([]);
   const [currentTurn, setCurrentTurn] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [actionLog, setActionLog] = useState([]);
+  const { actionLog, addAction, clearActionLog } = useActionLog();
 
   const handleNameChange = (idx, value) => {
     const updatedPlayers = [...players];
     updatedPlayers[idx] = value;
     setPlayers(updatedPlayers);
-  };
-
-  const addAction = (action) => {
-    const timestamp = new Date().toLocaleTimeString();
-    setActionLog((prev) => [...prev, { action, timestamp, turn: currentTurn }]);
   };
 
   const assignCharacters = async () => {
@@ -101,6 +97,7 @@ function App() {
                   setCurrentTurn={setCurrentTurn}
                   setPlayers={setPlayers}
                   setGameOver={setGameOver}
+                  clearActionLog={clearActionLog}
                 />
               </CardContent>
             </Card>

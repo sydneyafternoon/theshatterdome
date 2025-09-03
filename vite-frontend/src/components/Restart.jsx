@@ -8,6 +8,7 @@ function RestartGameButton({
   setCurrentTurn,
   setPlayers,
   setGameOver,
+  clearActionLog,
 }) {
   const handleRestart = async () => {
     // Reset all characters' health and status in backend
@@ -21,6 +22,7 @@ function RestartGameButton({
     setCurrentTurn(0);
     setPlayers(["", "", "", "", "", ""]);
     setGameOver(false);
+    clearActionLog();
   };
 
   return (
