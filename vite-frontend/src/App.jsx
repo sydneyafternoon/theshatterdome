@@ -16,7 +16,6 @@ function App() {
   const [currentTurn, setCurrentTurn] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [actionLog, setActionLog] = useState([]);
-  const [spellCastThisTurn, setSpellCastThisTurn] = useState(false);
 
   const handleNameChange = (idx, value) => {
     const updatedPlayers = [...players];
@@ -26,7 +25,7 @@ function App() {
 
   const addAction = (action) => {
     const timestamp = new Date().toLocaleTimeString();
-    setActionLog(prev => [...prev, { action, timestamp, turn: currentTurn }]);
+    setActionLog((prev) => [...prev, { action, timestamp, turn: currentTurn }]);
   };
 
   const assignCharacters = async () => {
@@ -48,22 +47,19 @@ function App() {
       setTurnOrder(sorted);
       setCurrentTurn(0);
       addAction("Characters assigned to all players");
-      setSpellCastThisTurn(false);
     } catch (error) {
       setAssigned([{ name: error.message }]);
       addAction(`Error assigning characters: ${error.message}`);
     }
   };
 
-  const endTurn = () => {
-    if (spellCastThisTurn) {
-      addAction(`${turnOrder[currentTurn].name} ended their turn (spell was cast)`);
-    } else {
-      addAction(`${turnOrder[currentTurn].name} ended their turn without casting any spell`);
+  const endTurn = (advanceTurn = true) => {
+    // Turn completion logging is now handled in SpellCasting component
+    // with combined action messages
+
+    if (advanceTurn) {
+      setCurrentTurn((prev) => (prev + 1) % turnOrder.length);
     }
-    setCurrentTurn((prev) => (prev + 1) % turnOrder.length);
-    addAction(`${turnOrder[(currentTurn + 1) % turnOrder.length].name}'s turn begins`);
-    setSpellCastThisTurn(false);
   };
 
   return (
@@ -117,8 +113,10 @@ function App() {
               </CardHeader>
               <CardContent>
                 <div className="mb-4 p-2 rounded bg-card text-card-foreground">
-                  <span className="font-bold">{turnOrder[currentTurn].name}</span> (
-                  {turnOrder[currentTurn].character?.name}) - Dexterity:{" "}
+                  <span className="font-bold">
+                    {turnOrder[currentTurn].name}
+                  </span>{" "}
+                  ({turnOrder[currentTurn].character?.name}) - Dexterity:{" "}
                   {turnOrder[currentTurn].character?.dexterity}
                 </div>
                 <SpellCasting
@@ -130,13 +128,8 @@ function App() {
                   gameOver={gameOver}
                   setGameOver={setGameOver}
                   addAction={addAction}
-                  setSpellCastThisTurn={setSpellCastThisTurn}
+                  onTurnEnd={endTurn}
                 />
-                {!gameOver && (
-                  <Button onClick={endTurn} className="mt-4 w-full">
-                    End Turn
-                  </Button>
-                )}
               </CardContent>
             </Card>
           )}
@@ -146,7 +139,9 @@ function App() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <h2 className="text-xl font-semibold mb-2">Assigned Characters</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                Assigned Characters
+              </h2>
             </CardHeader>
             <CardContent>
               {assigned.length === 0 ? (
@@ -156,8 +151,12 @@ function App() {
                       key={idx}
                       className="flex items-center justify-between py-2 px-3 border border-dashed border-muted-foreground/30 rounded"
                     >
-                      <span className="text-muted-foreground">Player {idx + 1}</span>
-                      <span className="text-muted-foreground">No character assigned</span>
+                      <span className="text-muted-foreground">
+                        Player {idx + 1}
+                      </span>
+                      <span className="text-muted-foreground">
+                        No character assigned
+                      </span>
                     </div>
                   ))}
                 </div>

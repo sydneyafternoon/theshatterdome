@@ -13,7 +13,7 @@ function SpellCasting({
   gameOver,
   setGameOver,
   addAction,
-  setSpellCastThisTurn,
+  onTurnEnd,
 }) {
   const [spells, setSpells] = useState([]);
   const [selectedSpell, setSelectedSpell] = useState(null);
@@ -24,6 +24,17 @@ function SpellCasting({
   const [channelingResult, setChannelingResult] = useState(""); // "success" or "failed"
 
   const currentPlayer = turnOrder[currentTurn];
+
+  // Helper function to get action word based on spell type
+  const getActionWord = (spellTypeId) => {
+    switch (spellTypeId) {
+      case 1: return "damaged";
+      case 4: return "healed";
+      case 2: return "punished";
+      case 3: return "buffed";
+      default: return "affected";
+    }
+  };
 
   useEffect(() => {
     if (currentPlayer?.character?.id) {
@@ -60,14 +71,13 @@ function SpellCasting({
       setShowChanneling(false);
       if (!isOk) {
         setChannelingResult("failed");
-        addAction(`${currentPlayer.name} failed to cast ${selectedSpell.name} on ${targetPlayer.name}`);
+        const actionWord = getActionWord(selectedSpell.type?.id);
+        addAction(`${currentPlayer.name} ${actionWord} ${turnOrder[selectedTarget].name} (failed)`);
         setTimeout(() => {
           setSelectedSpell(null);
           setSelectedTarget(null);
           setChannelingResult("");
-          setCurrentTurn(
-            currentTurn + 1 >= turnOrder.length ? 0 : currentTurn + 1
-          );
+          onTurnEnd(true); // Advance turn for failed spell
         }, 1000);
         return;
       }
@@ -76,9 +86,9 @@ function SpellCasting({
       setChannelingResult("success");
       const targetPlayer = turnOrder[selectedTarget];
       
-      // Log the successful spell cast
-      addAction(`${currentPlayer.name} successfully cast ${selectedSpell.name} on ${targetPlayer.name}`);
-      setSpellCastThisTurn(true);
+      // Log the successful spell cast with combined message
+      const actionWord = getActionWord(selectedSpell.type?.id);
+      addAction(`${currentPlayer.name} ${actionWord} ${targetPlayer.name} (successful)`);
       
       let healthChange = 0;
       let statusUpdate = null;
@@ -168,6 +178,7 @@ function SpellCasting({
       setCurrentTurn(newTurn);
       setTimeout(() => {
         setChannelingResult("");
+        onTurnEnd(false); // Don't advance turn (already advanced manually)
       }, 1000);
     }
   };
