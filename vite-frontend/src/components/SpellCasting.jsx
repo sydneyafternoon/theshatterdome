@@ -12,6 +12,8 @@ function SpellCasting({
   setCurrentTurn,
   gameOver,
   setGameOver,
+  addAction,
+  setSpellCastThisTurn,
 }) {
   const [spells, setSpells] = useState([]);
   const [selectedSpell, setSelectedSpell] = useState(null);
@@ -58,6 +60,7 @@ function SpellCasting({
       setShowChanneling(false);
       if (!isOk) {
         setChannelingResult("failed");
+        addAction(`${currentPlayer.name} failed to cast ${selectedSpell.name} on ${targetPlayer.name}`);
         setTimeout(() => {
           setSelectedSpell(null);
           setSelectedTarget(null);
@@ -72,6 +75,11 @@ function SpellCasting({
       // Proceed with spell casting logic
       setChannelingResult("success");
       const targetPlayer = turnOrder[selectedTarget];
+      
+      // Log the successful spell cast
+      addAction(`${currentPlayer.name} successfully cast ${selectedSpell.name} on ${targetPlayer.name}`);
+      setSpellCastThisTurn(true);
+      
       let healthChange = 0;
       let statusUpdate = null;
 

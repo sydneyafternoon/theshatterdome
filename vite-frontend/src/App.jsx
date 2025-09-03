@@ -16,6 +16,7 @@ function App() {
   const [currentTurn, setCurrentTurn] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [actionLog, setActionLog] = useState([]);
+  const [spellCastThisTurn, setSpellCastThisTurn] = useState(false);
 
   const handleNameChange = (idx, value) => {
     const updatedPlayers = [...players];
@@ -47,6 +48,7 @@ function App() {
       setTurnOrder(sorted);
       setCurrentTurn(0);
       addAction("Characters assigned to all players");
+      setSpellCastThisTurn(false);
     } catch (error) {
       setAssigned([{ name: error.message }]);
       addAction(`Error assigning characters: ${error.message}`);
@@ -54,9 +56,14 @@ function App() {
   };
 
   const endTurn = () => {
-    addAction(`${turnOrder[currentTurn].name} ended their turn`);
+    if (spellCastThisTurn) {
+      addAction(`${turnOrder[currentTurn].name} ended their turn (spell was cast)`);
+    } else {
+      addAction(`${turnOrder[currentTurn].name} ended their turn without casting any spell`);
+    }
     setCurrentTurn((prev) => (prev + 1) % turnOrder.length);
     addAction(`${turnOrder[(currentTurn + 1) % turnOrder.length].name}'s turn begins`);
+    setSpellCastThisTurn(false);
   };
 
   return (
@@ -123,6 +130,7 @@ function App() {
                   gameOver={gameOver}
                   setGameOver={setGameOver}
                   addAction={addAction}
+                  setSpellCastThisTurn={setSpellCastThisTurn}
                 />
                 {!gameOver && (
                   <Button onClick={endTurn} className="mt-4 w-full">
