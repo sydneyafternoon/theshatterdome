@@ -90,6 +90,7 @@ function SpellCasting({
       const actionWord = getActionWord(selectedSpell.type?.id);
       addAction(`${currentPlayer.name} ${actionWord} ${targetPlayer.name} (successful)`);
       
+      // Store spell effects for later application
       let healthChange = 0;
       let statusUpdate = null;
 
@@ -105,81 +106,82 @@ function SpellCasting({
 
       const newHealth = targetPlayer.character.health + healthChange;
 
-      try {
-        // Persist health change if applicable
-        if (selectedSpell.type?.id === 1 || selectedSpell.type?.id === 4) {
-          await axios.put(
-            `http://localhost:8080/api/character/${targetPlayer.character.id}/health`,
-            newHealth,
-            { headers: { "Content-Type": "application/json" } }
-          );
+      // Apply spell effects after showing success message
+      setTimeout(async () => {
+        try {
+          // Persist health change if applicable
+          if (selectedSpell.type?.id === 1 || selectedSpell.type?.id === 4) {
+            await axios.put(
+              `http://localhost:8080/api/character/${targetPlayer.character.id}/health`,
+              newHealth,
+              { headers: { "Content-Type": "application/json" } }
+            );
+          }
+          // Persist status change if applicable
+          if (statusUpdate !== null) {
+            await axios.put(
+              `http://localhost:8080/api/character/${targetPlayer.character.id}/status`,
+              statusUpdate,
+              { headers: { "Content-Type": "application/json" } }
+            );
+          }
+        } catch (error) {
+          console.error("Failed to update character:", error);
+          alert("Failed to update character. Please try again.");
         }
-        // Persist status change if applicable
-        if (statusUpdate !== null) {
-          await axios.put(
-            `http://localhost:8080/api/character/${targetPlayer.character.id}/status`,
-            statusUpdate,
-            { headers: { "Content-Type": "application/json" } }
-          );
+
+        let updatedOrder = turnOrder.map((player, idx) => {
+          if (idx === selectedTarget) {
+            return {
+              ...player,
+              character: {
+                ...player.character,
+                health:
+                  selectedSpell.type?.id === 1 || selectedSpell.type?.id === 4
+                    ? newHealth
+                    : player.character.health,
+                status:
+                  statusUpdate !== null ? statusUpdate : player.character.status,
+              },
+            };
+          }
+          return player;
+        });
+
+        // Remove players whose health is <= 0
+        updatedOrder = updatedOrder.filter(
+          (player) => player.character.health > 0
+        );
+
+        // Check if only one team remains
+        const remainingTeams = [
+          ...new Set(updatedOrder.map((player) => player.character.team)),
+        ];
+        if (remainingTeams.length === 1) {
+          setGameOver(true);
+          setWinner(remainingTeams[0]);
+          setAssigned(updatedOrder);
+          return;
         }
-      } catch (error) {
-        console.error("Failed to update character:", error);
-        alert("Failed to update character. Please try again.");
-      }
 
-      let updatedOrder = turnOrder.map((player, idx) => {
-        if (idx === selectedTarget) {
-          return {
-            ...player,
-            character: {
-              ...player.character,
-              health:
-                selectedSpell.type?.id === 1 || selectedSpell.type?.id === 4
-                  ? newHealth
-                  : player.character.health,
-              status:
-                statusUpdate !== null ? statusUpdate : player.character.status,
-            },
-          };
+        // Move to next turn
+        const newCurrentIndex = updatedOrder.findIndex(p => p.character.id === currentPlayer.character.id);
+        let newTurn;
+        if (newCurrentIndex === -1) {
+          // Current player was removed (shouldn't happen, but safety)
+          newTurn = 0;
+        } else {
+          newTurn = (newCurrentIndex + 1) % updatedOrder.length;
         }
-        return player;
-      });
 
-      // Remove players whose health is <= 0
-      updatedOrder = updatedOrder.filter(
-        (player) => player.character.health > 0
-      );
-
-      // Check if only one team remains
-      const remainingTeams = [
-        ...new Set(updatedOrder.map((player) => player.character.team)),
-      ];
-      if (remainingTeams.length === 1) {
-        setGameOver(true);
-        setWinner(remainingTeams[0]);
+        setTurnOrder(updatedOrder);
         setAssigned(updatedOrder);
-        return;
-      }
-
-      // Move to next turn after 1 second
-      const newCurrentIndex = updatedOrder.findIndex(p => p.character.id === currentPlayer.character.id);
-      let newTurn;
-      if (newCurrentIndex === -1) {
-        // Current player was removed (shouldn't happen, but safety)
-        newTurn = 0;
-      } else {
-        newTurn = (newCurrentIndex + 1) % updatedOrder.length;
-      }
-
-      setTurnOrder(updatedOrder);
-      setAssigned(updatedOrder);
-      setSelectedSpell(null);
-      setSelectedTarget(null);
-      setCurrentTurn(newTurn);
-      setTimeout(() => {
+        setSelectedSpell(null);
+        setSelectedTarget(null);
+        setCurrentTurn(newTurn);
         setChannelingResult("");
         onTurnEnd(false); // Don't advance turn (already advanced manually)
-      }, 1000);
+      }, 1500); // Slightly longer delay to ensure success message is visible
     }
   };
 
@@ -293,10 +295,14 @@ function SpellCasting({
 
       {/* Result message */}
       {channelingResult === "success" && (
-        <div className="text-green-600 font-semibold mt-4">Success!</div>
+        <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-md text-green-800 font-semibold text-center">
+          Success!
+        </div>
       )}
       {channelingResult === "failed" && (
-        <div className="text-red-600 font-semibold mt-4">Failed!</div>
+        <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-md text-red-800 font-semibold text-center">
+          Failed!
+        </div>
       )}
     </div>
   );
