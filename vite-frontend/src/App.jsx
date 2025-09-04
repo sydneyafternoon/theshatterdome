@@ -63,7 +63,7 @@ function App() {
     <div className="min-h-screen bg-background text-foreground p-4">
       <div className="max-w-7xl mx-auto h-[calc(100vh-2rem)] grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Action Log */}
-        <div>
+        <div className="h-full">
           <ActionLog actionLog={actionLog} />
         </div>
 
