@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import SpellCasting from "./components/SpellCasting.jsx";
 import RestartGame from "./components/Restart.jsx";
 import ActionLog from "./components/ActionLog.jsx";
+import AssignedCharacters from "./components/AssignedCharacters.jsx";
 import { useActionLog } from "./hooks/useActionLog.js";
 
 function App() {
@@ -60,14 +61,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto h-[calc(100vh-2rem)] grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Action Log */}
-        <div className="space-y-6">
+        <div>
           <ActionLog actionLog={actionLog} />
         </div>
 
         {/* Middle Column - Game Controls */}
-        <div className="space-y-6">
+        <div className="h-full space-y-6 overflow-y-auto">
           {assigned.length === 0 && (
             <Card>
               <CardHeader>
@@ -133,47 +134,8 @@ function App() {
         </div>
 
         {/* Right Column - Assigned Characters */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-semibold mb-2">
-                Assigned Characters
-              </h2>
-            </CardHeader>
-            <CardContent>
-              {assigned.length === 0 ? (
-                <div className="space-y-2">
-                  {players.map((_, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between py-2 px-3 border border-dashed border-muted-foreground/30 rounded"
-                    >
-                      <span className="text-muted-foreground">
-                        Player {idx + 1}
-                      </span>
-                      <span className="text-muted-foreground">
-                        No character assigned
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  {assigned.map((player, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between py-2 px-3 border-b last:border-b-0"
-                    >
-                      <span className="font-medium">{player.name}</span>
-                      <span className="ml-2">
-                        {player.character?.name || "No character assigned"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        <div>
+          <AssignedCharacters assigned={assigned} players={players} />
         </div>
       </div>
     </div>
