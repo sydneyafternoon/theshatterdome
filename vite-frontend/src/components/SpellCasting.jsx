@@ -25,17 +25,6 @@ function SpellCasting({
 
   const currentPlayer = turnOrder[currentTurn];
 
-  // Helper function to get action word based on spell type
-  const getActionWord = (spellTypeId) => {
-    switch (spellTypeId) {
-      case 1: return "damaged";
-      case 4: return "healed";
-      case 2: return "punished";
-      case 3: return "buffed";
-      default: return "affected";
-    }
-  };
-
   useEffect(() => {
     if (currentPlayer?.character?.id) {
       axios
@@ -71,8 +60,9 @@ function SpellCasting({
       setShowChanneling(false);
       if (!isOk) {
         setChannelingResult("failed");
-        const actionWord = getActionWord(selectedSpell.type?.id);
-        addAction(`${currentPlayer.name} ${actionWord} ${turnOrder[selectedTarget].name} (failed)`);
+        addAction(
+          `${currentPlayer.name} casted ${selectedSpell.name} on ${turnOrder[selectedTarget].name} (failed)|${selectedSpell.type?.id}`
+        );
         setTimeout(() => {
           setSelectedSpell(null);
           setSelectedTarget(null);
@@ -85,11 +75,12 @@ function SpellCasting({
       // Proceed with spell casting logic
       setChannelingResult("success");
       const targetPlayer = turnOrder[selectedTarget];
-      
+
       // Log the successful spell cast with combined message
-      const actionWord = getActionWord(selectedSpell.type?.id);
-      addAction(`${currentPlayer.name} ${actionWord} ${targetPlayer.name} (successful)`);
-      
+      addAction(
+        `${currentPlayer.name} casted ${selectedSpell.name} on ${targetPlayer.name} (successful)|${selectedSpell.type?.id}`
+      );
+
       // Store spell effects for later application
       let healthChange = 0;
       let statusUpdate = null;
@@ -141,7 +132,9 @@ function SpellCasting({
                     ? newHealth
                     : player.character.health,
                 status:
-                  statusUpdate !== null ? statusUpdate : player.character.status,
+                  statusUpdate !== null
+                    ? statusUpdate
+                    : player.character.status,
               },
             };
           }
@@ -152,7 +145,9 @@ function SpellCasting({
         const targetWasDead = targetPlayer.character.health <= 0;
         const targetIsNowDead = newHealth <= 0 && !targetWasDead;
         if (targetIsNowDead) {
-          addAction(`${targetPlayer.name} (${targetPlayer.character.name}) was killed!`);
+          addAction(
+            `${targetPlayer.name} (${targetPlayer.character.name}) was killed!`
+          );
         }
 
         // Remove players whose health is <= 0
@@ -172,7 +167,9 @@ function SpellCasting({
         }
 
         // Move to next turn
-        const newCurrentIndex = updatedOrder.findIndex(p => p.character.id === currentPlayer.character.id);
+        const newCurrentIndex = updatedOrder.findIndex(
+          (p) => p.character.id === currentPlayer.character.id
+        );
         let newTurn;
         if (newCurrentIndex === -1) {
           // Current player was removed (shouldn't happen, but safety)
@@ -221,7 +218,11 @@ function SpellCasting({
       )}
       {selectedSpell && (
         <div className="mb-4">
-          <Button variant="ghost" onClick={() => setSelectedSpell(null)} className="mb-2">
+          <Button
+            variant="ghost"
+            onClick={() => setSelectedSpell(null)}
+            className="mb-2"
+          >
             ← Back to Spells
           </Button>
           <h4 className="font-medium mb-2">Select Target:</h4>
@@ -230,7 +231,8 @@ function SpellCasting({
               if (idx === currentTurn) return null;
               // Attack or penalty: type id 1 or 2 → different team
               if (
-                (selectedSpell.type?.id === 1 || selectedSpell.type?.id === 2) &&
+                (selectedSpell.type?.id === 1 ||
+                  selectedSpell.type?.id === 2) &&
                 player.character?.team !== currentPlayer.character?.team
               ) {
                 return (
@@ -239,7 +241,8 @@ function SpellCasting({
                     variant={selectedTarget === idx ? "default" : "outline"}
                     onClick={() => setSelectedTarget(idx)}
                   >
-                    {player.name} ({player.character?.name}) | Health: {player.character?.health}
+                    {player.name} ({player.character?.name}) | Health:{" "}
+                    {player.character?.health}
                   </Button>
                 );
               }
@@ -255,7 +258,8 @@ function SpellCasting({
                     variant={selectedTarget === idx ? "default" : "outline"}
                     onClick={() => setSelectedTarget(idx)}
                   >
-                    {player.name} ({player.character?.name}) | Health: {player.character?.health}
+                    {player.name} ({player.character?.name}) | Health:{" "}
+                    {player.character?.health}
                   </Button>
                 );
               }
@@ -270,7 +274,8 @@ function SpellCasting({
                     variant={selectedTarget === idx ? "default" : "outline"}
                     onClick={() => setSelectedTarget(idx)}
                   >
-                    {player.name} ({player.character?.name}) | Health: {player.character?.health}
+                    {player.name} ({player.character?.name}) | Health:{" "}
+                    {player.character?.health}
                   </Button>
                 );
               }
@@ -290,10 +295,11 @@ function SpellCasting({
           <div className="font-semibold mb-2">Channeling Question:</div>
           <div className="mb-4">{question || "Loading..."}</div>
           <div className="flex gap-2">
-            <Button onClick={() => handleChannelingResponse(true)}>
-              OK
-            </Button>
-            <Button variant="outline" onClick={() => handleChannelingResponse(false)}>
+            <Button onClick={() => handleChannelingResponse(true)}>OK</Button>
+            <Button
+              variant="outline"
+              onClick={() => handleChannelingResponse(false)}
+            >
               Not OK
             </Button>
           </div>
