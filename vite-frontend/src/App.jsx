@@ -106,17 +106,7 @@ function App() {
 
           {turnOrder.length > 0 && (
             <Card>
-              <CardHeader>
-                <h2 className="text-xl font-semibold mb-1">Current Turn</h2>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4 p-2 rounded bg-card text-card-foreground">
-                  <span className="font-bold">
-                    {turnOrder[currentTurn].name}
-                  </span>{" "}
-                  ({turnOrder[currentTurn].character?.name}) - Dexterity:{" "}
-                  {turnOrder[currentTurn].character?.dexterity}
-                </div>
+              <CardContent className="pt-6">
                 <SpellCasting
                   turnOrder={turnOrder}
                   currentTurn={currentTurn}
@@ -135,7 +125,12 @@ function App() {
 
         {/* Right Column - Assigned Characters */}
         <div>
-          <AssignedCharacters assigned={assigned} players={players} />
+          <AssignedCharacters
+            assigned={assigned}
+            players={players}
+            currentTurn={currentTurn}
+            turnOrder={turnOrder}
+          />
         </div>
       </div>
     </div>
