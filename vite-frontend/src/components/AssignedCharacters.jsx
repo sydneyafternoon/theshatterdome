@@ -39,34 +39,36 @@ function AssignedCharacters({ assigned, players, currentTurn, turnOrder }) {
                         isCurrentTurn ? "text-gray-900" : "text-gray-700"
                       }`}
                     >
-                      {player.name}
+                      {player.character?.name || "No character assigned"}
                     </div>
                     <div
                       className={`text-sm mt-1 ${
                         isCurrentTurn ? "text-gray-700" : "text-gray-500"
                       }`}
                     >
-                      {player.character?.name || "No character assigned"}
+                      {player.name}
                     </div>
                   </div>
-                  {player.character?.dexterity && (
-                    <div className="text-right">
-                      <div
-                        className={`text-xs uppercase tracking-wide font-semibold ${
-                          isCurrentTurn ? "text-gray-600" : "text-gray-500"
-                        }`}
-                      >
-                        Dex
+                  {player.character?.health !== undefined &&
+                    player.character?.fullHealth && (
+                      <div className="text-right">
+                        <div
+                          className={`text-xs uppercase tracking-wide font-semibold ${
+                            isCurrentTurn ? "text-gray-600" : "text-gray-500"
+                          }`}
+                        >
+                          Health
+                        </div>
+                        <div
+                          className={`text-lg font-bold ${
+                            isCurrentTurn ? "text-gray-800" : "text-gray-600"
+                          }`}
+                        >
+                          {player.character.health}/
+                          {player.character.fullHealth}
+                        </div>
                       </div>
-                      <div
-                        className={`text-lg font-bold ${
-                          isCurrentTurn ? "text-gray-800" : "text-gray-600"
-                        }`}
-                      >
-                        {player.character.dexterity}
-                      </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
             );
