@@ -88,18 +88,18 @@ function SpellCasting({
 
   const handleChannelingResponse = async (isOk) => {
     if (selectedSpell && selectedTarget !== null) {
-      setShowChanneling(false);
       if (!isOk) {
         setChannelingResult("failed");
         addAction(
           `${currentPlayer.name} casted ${selectedSpell.name} on ${turnOrder[selectedTarget].name} (failed)|${selectedSpell.type?.id}`
         );
         setTimeout(() => {
+          setShowChanneling(false);
           setSelectedSpell(null);
           setSelectedTarget(null);
           setChannelingResult("");
           onTurnEnd(true); // Advance turn for failed spell
-        }, 1000);
+        }, 2000); // Show failed result for 2 seconds before collapsing
         return;
       }
 
@@ -211,12 +211,13 @@ function SpellCasting({
 
         setTurnOrder(updatedOrder);
         setAssigned(updatedOrder);
+        setShowChanneling(false); // Collapse the card after everything is done
         setSelectedSpell(null);
         setSelectedTarget(null);
         setCurrentTurn(newTurn);
         setChannelingResult("");
         onTurnEnd(false); // Don't advance turn (already advanced manually)
-      }, 1500); // Slightly longer delay to ensure success message is visible
+      }, 2000); // Show success result for 2 seconds before continuing
     }
   };
 
@@ -233,6 +234,52 @@ function SpellCasting({
 
   return (
     <div className="w-full max-w-xl mx-auto my-4">
+      {/* Question section - shows as line when inactive, expands to card when active */}
+      <div className="mb-4">
+        <div
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            showChanneling ? "max-h-96 opacity-100" : "max-h-1 opacity-100"
+          }`}
+        >
+          {showChanneling ? (
+            <div className="p-4 border rounded bg-muted">
+              <div className="font-semibold mb-2">Channeling Question:</div>
+              <div className="mb-4">{question || "Loading..."}</div>
+              <div className="flex gap-2 mb-4">
+                <Button onClick={() => handleChannelingResponse(true)}>
+                  OK
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleChannelingResponse(false)}
+                >
+                  Not OK
+                </Button>
+              </div>
+
+              {/* Result section within the expanded area */}
+              {channelingResult === "success" && (
+                <div className="p-3 bg-green-100 border border-green-300 rounded-md text-green-800 font-semibold text-center">
+                  Success!
+                </div>
+              )}
+              {channelingResult === "failed" && (
+                <div className="p-3 bg-red-100 border border-red-300 rounded-md text-red-800 font-semibold text-center">
+                  Failed!
+                </div>
+              )}
+              {!channelingResult && (
+                <div className="p-3 bg-gray-100 border border-gray-300 rounded-md text-gray-600 text-center">
+                  Casting...
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="h-1 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors duration-300"></div>
+          )}
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-2 mb-4">
         {[...Array(4)].map((_, idx) => {
           const spell = spells[idx];
@@ -346,34 +393,6 @@ function SpellCasting({
             : "Cast Spell"}
         </Button>
       </div>
-
-      {showChanneling && (
-        <div className="mt-4 p-4 border rounded bg-muted">
-          <div className="font-semibold mb-2">Channeling Question:</div>
-          <div className="mb-4">{question || "Loading..."}</div>
-          <div className="flex gap-2">
-            <Button onClick={() => handleChannelingResponse(true)}>OK</Button>
-            <Button
-              variant="outline"
-              onClick={() => handleChannelingResponse(false)}
-            >
-              Not OK
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Result message */}
-      {channelingResult === "success" && (
-        <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-md text-green-800 font-semibold text-center">
-          Success!
-        </div>
-      )}
-      {channelingResult === "failed" && (
-        <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-md text-red-800 font-semibold text-center">
-          Failed!
-        </div>
-      )}
     </div>
   );
 }
