@@ -26,18 +26,33 @@ function SpellCasting({
   const currentPlayer = turnOrder[currentTurn];
 
   // Function to get spell type color for buttons
-  const getSpellButtonColor = (spellType) => {
-    switch (spellType) {
-      case 1:
-        return "bg-red-100 border-red-500 text-red-700 hover:bg-red-200 hover:text-red-800"; // Attack spells - red
-      case 2:
-        return "bg-purple-100 border-purple-500 text-purple-700 hover:bg-purple-200 hover:text-purple-800"; // Penalty spells - purple
-      case 3:
-        return "bg-blue-100 border-blue-500 text-blue-700 hover:bg-blue-200 hover:text-blue-800"; // Buff spells - blue
-      case 4:
-        return "bg-green-100 border-green-500 text-green-700 hover:bg-green-200 hover:text-green-800"; // Healing spells - green
-      default:
-        return ""; // Default styling
+  const getSpellButtonColor = (spellType, isSelected = false) => {
+    if (isSelected) {
+      switch (spellType) {
+        case 1:
+          return "bg-red-500 border-red-500 text-red-100 hover:bg-red-600 hover:text-white"; // Attack spells - selected
+        case 2:
+          return "bg-purple-500 border-purple-500 text-purple-100 hover:bg-purple-600 hover:text-white"; // Penalty spells - selected
+        case 3:
+          return "bg-blue-500 border-blue-500 text-blue-100 hover:bg-blue-600 hover:text-white"; // Buff spells - selected
+        case 4:
+          return "bg-green-500 border-green-500 text-green-100 hover:bg-green-600 hover:text-white"; // Healing spells - selected
+        default:
+          return ""; // Default styling
+      }
+    } else {
+      switch (spellType) {
+        case 1:
+          return "bg-red-100 border-red-500 text-red-700 hover:bg-red-200 hover:text-red-800"; // Attack spells - unselected
+        case 2:
+          return "bg-purple-100 border-purple-500 text-purple-700 hover:bg-purple-200 hover:text-purple-800"; // Penalty spells - unselected
+        case 3:
+          return "bg-blue-100 border-blue-500 text-blue-700 hover:bg-blue-200 hover:text-blue-800"; // Buff spells - unselected
+        case 4:
+          return "bg-green-100 border-green-500 text-green-700 hover:bg-green-200 hover:text-green-800"; // Healing spells - unselected
+        default:
+          return ""; // Default styling
+      }
     }
   };
 
@@ -219,45 +234,38 @@ function SpellCasting({
   return (
     <div className="w-full max-w-xl mx-auto my-4">
       <h3 className="text-xl font-semibold mb-4">Spells</h3>
-      {!selectedSpell && (
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          {[...Array(4)].map((_, idx) => {
-            const spell = spells[idx];
-            if (spell) {
-              return (
-                <Button
-                  key={idx}
-                  variant="outline"
-                  onClick={() => setSelectedSpell(spell)}
-                  className={`h-12 text-sm ${getSpellButtonColor(
-                    spell.type?.id
-                  )}`}
-                >
-                  <span className="truncate px-1">{spell.name}</span>
-                </Button>
-              );
-            } else {
-              return (
-                <div
-                  key={idx}
-                  className="h-12 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center bg-gray-50"
-                >
-                  <span className="text-gray-400 text-sm">Empty Slot</span>
-                </div>
-              );
-            }
-          })}
-        </div>
-      )}
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        {[...Array(4)].map((_, idx) => {
+          const spell = spells[idx];
+          if (spell) {
+            const isSelected = selectedSpell?.id === spell.id;
+            return (
+              <Button
+                key={idx}
+                variant="outline"
+                onClick={() => setSelectedSpell(spell)}
+                className={`h-12 text-sm ${getSpellButtonColor(
+                  spell.type?.id,
+                  isSelected
+                )}`}
+              >
+                <span className="truncate px-1">{spell.name}</span>
+              </Button>
+            );
+          } else {
+            return (
+              <div
+                key={idx}
+                className="h-12 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center bg-gray-50"
+              >
+                <span className="text-gray-400 text-sm">Empty Slot</span>
+              </div>
+            );
+          }
+        })}
+      </div>
       {selectedSpell && (
         <div className="mb-4">
-          <Button
-            variant="ghost"
-            onClick={() => setSelectedSpell(null)}
-            className="mb-2"
-          >
-            ← Back to Spells
-          </Button>
           <h4 className="font-medium mb-2">Select Target:</h4>
           <div className="flex flex-wrap gap-2 mb-2">
             {turnOrder.map((player, idx) => {
