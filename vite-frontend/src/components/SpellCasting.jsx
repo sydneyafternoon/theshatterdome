@@ -264,72 +264,87 @@ function SpellCasting({
           }
         })}
       </div>
-      {selectedSpell && (
-        <div className="mb-4">
-          <h4 className="font-medium mb-2">Select Target:</h4>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {turnOrder.map((player, idx) => {
-              if (idx === currentTurn) return null;
+      <div className="mb-4">
+        <h4 className="font-medium mb-2">Select Target:</h4>
+        <div className="grid grid-cols-1 gap-2 mb-2">
+          {[...Array(5)].map((_, idx) => {
+            // Find the player at this index (excluding current player)
+            const availablePlayers = turnOrder.filter(
+              (_, playerIdx) => playerIdx !== currentTurn
+            );
+            const player = availablePlayers[idx];
+
+            if (!player) {
+              // Empty slot
+              return (
+                <div
+                  key={idx}
+                  className="h-10 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center bg-gray-50"
+                >
+                  <span className="text-gray-400 text-sm">Empty Slot</span>
+                </div>
+              );
+            }
+
+            const playerIndex = turnOrder.findIndex((p) => p === player);
+            let isValidTarget = false;
+            let isDisabled = !selectedSpell;
+
+            if (selectedSpell) {
               // Attack or penalty: type id 1 or 2 → different team
               if (
                 (selectedSpell.type?.id === 1 ||
                   selectedSpell.type?.id === 2) &&
                 player.character?.team !== currentPlayer.character?.team
               ) {
-                return (
-                  <Button
-                    key={idx}
-                    variant={selectedTarget === idx ? "default" : "outline"}
-                    onClick={() => setSelectedTarget(idx)}
-                  >
-                    {player.name} ({player.character?.name}) | Health:{" "}
-                    {player.character?.health}
-                  </Button>
-                );
+                isValidTarget = true;
               }
               // Heal: type id 4 → same team and not full health
-              if (
+              else if (
                 selectedSpell.type?.id === 4 &&
                 player.character?.team === currentPlayer.character?.team &&
                 player.character?.health < player.character?.fullHealth
               ) {
-                return (
-                  <Button
-                    key={idx}
-                    variant={selectedTarget === idx ? "default" : "outline"}
-                    onClick={() => setSelectedTarget(idx)}
-                  >
-                    {player.name} ({player.character?.name}) | Health:{" "}
-                    {player.character?.health}
-                  </Button>
-                );
+                isValidTarget = true;
               }
               // Bonus: type id 3 → same team (no health check)
-              if (
+              else if (
                 selectedSpell.type?.id === 3 &&
                 player.character?.team === currentPlayer.character?.team
               ) {
-                return (
-                  <Button
-                    key={idx}
-                    variant={selectedTarget === idx ? "default" : "outline"}
-                    onClick={() => setSelectedTarget(idx)}
-                  >
-                    {player.name} ({player.character?.name}) | Health:{" "}
-                    {player.character?.health}
-                  </Button>
-                );
+                isValidTarget = true;
               }
-              return null;
-            })}
-          </div>
-          {selectedTarget !== null && (
-            <Button onClick={castSpell} className="w-full">
-              Cast {selectedSpell.name} on {turnOrder[selectedTarget].name}
-            </Button>
-          )}
+            }
+
+            const buttonClasses =
+              isDisabled || !isValidTarget
+                ? "opacity-50 cursor-not-allowed"
+                : "";
+
+            return (
+              <Button
+                key={idx}
+                variant={selectedTarget === playerIndex ? "default" : "outline"}
+                onClick={() => {
+                  if (!isDisabled && isValidTarget) {
+                    setSelectedTarget(playerIndex);
+                  }
+                }}
+                disabled={isDisabled || !isValidTarget}
+                className={`h-10 text-sm ${buttonClasses}`}
+              >
+                {player.name} ({player.character?.name}) | Health:{" "}
+                {player.character?.health}
+              </Button>
+            );
+          })}
         </div>
-      )}
+        {selectedSpell && selectedTarget !== null && (
+          <Button onClick={castSpell} className="w-full">
+            Cast {selectedSpell.name} on {turnOrder[selectedTarget].name}
+          </Button>
+        )}
+      </div>
 
       {showChanneling && (
         <div className="mt-4 p-4 border rounded bg-muted">
