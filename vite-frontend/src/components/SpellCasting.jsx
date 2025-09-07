@@ -148,6 +148,13 @@ function SpellCasting({
           return player;
         });
 
+        // Check for character death and report it
+        const targetWasDead = targetPlayer.character.health <= 0;
+        const targetIsNowDead = newHealth <= 0 && !targetWasDead;
+        if (targetIsNowDead) {
+          addAction(`${targetPlayer.name} (${targetPlayer.character.name}) was killed!`);
+        }
+
         // Remove players whose health is <= 0
         updatedOrder = updatedOrder.filter(
           (player) => player.character.health > 0
