@@ -47,11 +47,15 @@ function AssignedCharacters({
             const isCurrentTurn =
               turnOrder &&
               turnOrder[currentTurn]?.character?.id === player.character?.id;
+            const isDead = player.character?.health <= 0;
+
             return (
               <div
                 key={idx}
-                className={`p-4 rounded-lg shadow-sm ${
-                  isCurrentTurn
+                className={`p-4 rounded-lg shadow-sm transition-all duration-300 ${
+                  isDead
+                    ? "bg-gray-100 border border-gray-300 opacity-60"
+                    : isCurrentTurn
                     ? "bg-gradient-to-r from-gray-50 to-slate-50 border-l-4 border-gray-600"
                     : "bg-gray-25 border border-gray-200"
                 }`}
@@ -60,14 +64,27 @@ function AssignedCharacters({
                   <div>
                     <div
                       className={`text-base font-bold ${
-                        isCurrentTurn ? "text-gray-900" : "text-gray-700"
+                        isDead
+                          ? "text-gray-500"
+                          : isCurrentTurn
+                          ? "text-gray-900"
+                          : "text-gray-700"
                       }`}
                     >
                       {player.character?.name || "No character assigned"}
+                      {isDead && (
+                        <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-normal">
+                          DEAD
+                        </span>
+                      )}
                     </div>
                     <div
                       className={`text-sm mt-1 ${
-                        isCurrentTurn ? "text-gray-700" : "text-gray-500"
+                        isDead
+                          ? "text-gray-400"
+                          : isCurrentTurn
+                          ? "text-gray-700"
+                          : "text-gray-500"
                       }`}
                     >
                       {player.name}
@@ -78,14 +95,22 @@ function AssignedCharacters({
                       <div className="text-right">
                         <div
                           className={`text-xs uppercase tracking-wide font-semibold ${
-                            isCurrentTurn ? "text-gray-600" : "text-gray-500"
+                            isDead
+                              ? "text-gray-400"
+                              : isCurrentTurn
+                              ? "text-gray-600"
+                              : "text-gray-500"
                           }`}
                         >
                           Health
                         </div>
                         <div
                           className={`text-lg font-bold ${
-                            isCurrentTurn ? "text-gray-800" : "text-gray-600"
+                            isDead
+                              ? "text-red-500"
+                              : isCurrentTurn
+                              ? "text-gray-800"
+                              : "text-gray-600"
                           }`}
                         >
                           {player.character.health}/

@@ -193,36 +193,30 @@ function SpellCasting({
           );
         }
 
-        // Remove players whose health is <= 0
-        updatedOrder = updatedOrder.filter(
+        // Keep all players but identify living ones for game logic
+        const livingPlayers = updatedOrder.filter(
           (player) => player.character.health > 0
         );
 
-        // Check if only one team remains
+        // Check if only one team remains among living players
         const remainingTeams = [
-          ...new Set(updatedOrder.map((player) => player.character.team)),
+          ...new Set(livingPlayers.map((player) => player.character.team)),
         ];
         if (remainingTeams.length === 1) {
           setGameOver(true);
           setWinner(remainingTeams[0]);
-          setAssigned(updatedOrder);
+          setAssigned(updatedOrder); // Keep all players including dead ones
           return;
         }
 
-        // Move to next turn
-        const newCurrentIndex = updatedOrder.findIndex(
-          (p) => p.character.id === currentPlayer.character.id
-        );
-        let newTurn;
-        if (newCurrentIndex === -1) {
-          // Current player was removed (shouldn't happen, but safety)
-          newTurn = 0;
-        } else {
-          newTurn = (newCurrentIndex + 1) % updatedOrder.length;
-        }
+        // Move to next living player's turn
+        let newTurn = currentTurn;
+        do {
+          newTurn = (newTurn + 1) % updatedOrder.length;
+        } while (updatedOrder[newTurn].character.health <= 0);
 
-        setTurnOrder(updatedOrder);
-        setAssigned(updatedOrder);
+        setTurnOrder(updatedOrder); // Keep all players including dead ones
+        setAssigned(updatedOrder); // Keep all players including dead ones
         setShowChanneling(false); // Collapse the card after everything is done
         setSelectedSpell(null);
         setSelectedTarget(null);
@@ -347,7 +341,11 @@ function SpellCasting({
             let isValidTarget = false;
             let isDisabled = !selectedSpell;
 
-            if (selectedSpell) {
+            // Dead characters cannot be targeted
+            if (player.character?.health <= 0) {
+              isValidTarget = false;
+              isDisabled = true;
+            } else if (selectedSpell) {
               // Attack or penalty: type id 1 or 2 → different team
               if (
                 (selectedSpell.type?.id === 1 ||
