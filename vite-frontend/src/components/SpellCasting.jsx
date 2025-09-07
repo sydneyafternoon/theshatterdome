@@ -25,6 +25,22 @@ function SpellCasting({
 
   const currentPlayer = turnOrder[currentTurn];
 
+  // Function to get spell type color for buttons
+  const getSpellButtonColor = (spellType) => {
+    switch (spellType) {
+      case 1:
+        return "bg-red-100 border-red-500 text-red-700 hover:bg-red-200 hover:text-red-800"; // Attack spells - red
+      case 2:
+        return "bg-purple-100 border-purple-500 text-purple-700 hover:bg-purple-200 hover:text-purple-800"; // Penalty spells - purple
+      case 3:
+        return "bg-blue-100 border-blue-500 text-blue-700 hover:bg-blue-200 hover:text-blue-800"; // Buff spells - blue
+      case 4:
+        return "bg-green-100 border-green-500 text-green-700 hover:bg-green-200 hover:text-green-800"; // Healing spells - green
+      default:
+        return ""; // Default styling
+    }
+  };
+
   useEffect(() => {
     if (currentPlayer?.character?.id) {
       axios
@@ -210,6 +226,7 @@ function SpellCasting({
               key={idx}
               variant="outline"
               onClick={() => setSelectedSpell(spell)}
+              className={getSpellButtonColor(spell.type?.id)}
             >
               {spell.name}
             </Button>
