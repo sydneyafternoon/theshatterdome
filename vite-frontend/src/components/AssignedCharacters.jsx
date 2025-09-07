@@ -1,17 +1,17 @@
 import React from "react";
 import RestartGame from "./Restart.jsx";
 
-function AssignedCharacters({ 
-  assigned, 
-  players, 
-  currentTurn, 
+function AssignedCharacters({
+  assigned,
+  players,
+  currentTurn,
   turnOrder,
   setAssigned,
   setTurnOrder,
   setCurrentTurn,
   setPlayers,
   setGameOver,
-  clearActionLog
+  clearActionLog,
 }) {
   return (
     <div className="h-full overflow-y-auto">
@@ -26,7 +26,7 @@ function AssignedCharacters({
           clearActionLog={clearActionLog}
         />
       </div>
-      
+
       {assigned.length === 0 ? (
         <div className="space-y-2">
           {players.map((_, idx) => (
