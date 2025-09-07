@@ -70,10 +70,22 @@ function SpellCasting({
 
   // Prevent back button from retaining after entering new turn
   useEffect(() => {
-    setSelectedSpell(null);
-    setSelectedTarget(null);
-    setChannelingResult("");
-  }, [currentTurn]);
+    // If channeling is active when turn changes, animate collapse first
+    if (showChanneling) {
+      setShowChanneling(false);
+      // Wait for collapse animation to finish before clearing other states
+      setTimeout(() => {
+        setSelectedSpell(null);
+        setSelectedTarget(null);
+        setChannelingResult("");
+      }, 500); // Match the duration-500 transition time
+    } else {
+      setSelectedSpell(null);
+      setSelectedTarget(null);
+      setChannelingResult("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTurn]); // Only depend on currentTurn to avoid infinite loop
 
   const castSpell = async () => {
     if (selectedSpell && selectedTarget !== null) {
@@ -233,7 +245,7 @@ function SpellCasting({
   }
 
   return (
-    <div className="w-full max-w-xl mx-auto my-4">
+    <div className="w-full max-w-xl mx-auto mb-4">
       {/* Question section - shows as line when inactive, expands to card when active */}
       <div className="mb-4">
         <div
