@@ -233,7 +233,6 @@ function SpellCasting({
 
   return (
     <div className="w-full max-w-xl mx-auto my-4">
-      <h3 className="text-xl font-semibold mb-4">Spells</h3>
       <div className="grid grid-cols-2 gap-2 mb-4">
         {[...Array(4)].map((_, idx) => {
           const spell = spells[idx];
@@ -265,7 +264,6 @@ function SpellCasting({
         })}
       </div>
       <div className="mb-4">
-        <h4 className="font-medium mb-2">Select Target:</h4>
         <div className="grid grid-cols-1 gap-2 mb-2">
           {[...Array(5)].map((_, idx) => {
             // Find the player at this index (excluding current player)
@@ -333,17 +331,20 @@ function SpellCasting({
                 disabled={isDisabled || !isValidTarget}
                 className={`h-10 text-sm ${buttonClasses}`}
               >
-                {player.name} ({player.character?.name}) | Health:{" "}
-                {player.character?.health}
+                {player.character?.name}
               </Button>
             );
           })}
         </div>
-        {selectedSpell && selectedTarget !== null && (
-          <Button onClick={castSpell} className="w-full">
-            Cast {selectedSpell.name} on {turnOrder[selectedTarget].name}
-          </Button>
-        )}
+        <Button
+          onClick={castSpell}
+          className="w-full mt-3"
+          disabled={!selectedSpell || selectedTarget === null}
+        >
+          {selectedSpell && selectedTarget !== null
+            ? `Cast ${selectedSpell.name}`
+            : "Cast Spell"}
+        </Button>
       </div>
 
       {showChanneling && (

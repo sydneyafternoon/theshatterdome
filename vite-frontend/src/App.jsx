@@ -107,7 +107,7 @@ function App() {
           {turnOrder.length > 0 && (
             <Card>
               <CardHeader>
-                <h2 className="text-xl font-semibold mb-2">Current Turn</h2>
+                <h2 className="text-xl font-semibold mb-1">Current Turn</h2>
               </CardHeader>
               <CardContent>
                 <div className="mb-4 p-2 rounded bg-card text-card-foreground">
