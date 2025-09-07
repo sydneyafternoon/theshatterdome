@@ -220,17 +220,33 @@ function SpellCasting({
     <div className="w-full max-w-xl mx-auto my-4">
       <h3 className="text-xl font-semibold mb-4">Spells</h3>
       {!selectedSpell && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {spells.map((spell, idx) => (
-            <Button
-              key={idx}
-              variant="outline"
-              onClick={() => setSelectedSpell(spell)}
-              className={getSpellButtonColor(spell.type?.id)}
-            >
-              {spell.name}
-            </Button>
-          ))}
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {[...Array(4)].map((_, idx) => {
+            const spell = spells[idx];
+            if (spell) {
+              return (
+                <Button
+                  key={idx}
+                  variant="outline"
+                  onClick={() => setSelectedSpell(spell)}
+                  className={`h-12 text-sm ${getSpellButtonColor(
+                    spell.type?.id
+                  )}`}
+                >
+                  <span className="truncate px-1">{spell.name}</span>
+                </Button>
+              );
+            } else {
+              return (
+                <div
+                  key={idx}
+                  className="h-12 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center bg-gray-50"
+                >
+                  <span className="text-gray-400 text-sm">Empty Slot</span>
+                </div>
+              );
+            }
+          })}
         </div>
       )}
       {selectedSpell && (
