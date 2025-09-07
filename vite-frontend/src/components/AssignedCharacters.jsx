@@ -1,8 +1,32 @@
 import React from "react";
+import RestartGame from "./Restart.jsx";
 
-function AssignedCharacters({ assigned, players, currentTurn, turnOrder }) {
+function AssignedCharacters({ 
+  assigned, 
+  players, 
+  currentTurn, 
+  turnOrder,
+  setAssigned,
+  setTurnOrder,
+  setCurrentTurn,
+  setPlayers,
+  setGameOver,
+  clearActionLog
+}) {
   return (
     <div className="h-full overflow-y-auto">
+      {/* Restart Game Button */}
+      <div className="mb-4">
+        <RestartGame
+          setAssigned={setAssigned}
+          setTurnOrder={setTurnOrder}
+          setCurrentTurn={setCurrentTurn}
+          setPlayers={setPlayers}
+          setGameOver={setGameOver}
+          clearActionLog={clearActionLog}
+        />
+      </div>
+      
       {assigned.length === 0 ? (
         <div className="space-y-2">
           {players.map((_, idx) => (

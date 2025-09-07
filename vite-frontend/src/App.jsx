@@ -6,7 +6,6 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SpellCasting from "./components/SpellCasting.jsx";
-import RestartGame from "./components/Restart.jsx";
 import ActionLog from "./components/ActionLog.jsx";
 import AssignedCharacters from "./components/AssignedCharacters.jsx";
 import { useActionLog } from "./hooks/useActionLog.js";
@@ -92,14 +91,6 @@ function App() {
                 >
                   Assign Characters
                 </Button>
-                <RestartGame
-                  setAssigned={setAssigned}
-                  setTurnOrder={setTurnOrder}
-                  setCurrentTurn={setCurrentTurn}
-                  setPlayers={setPlayers}
-                  setGameOver={setGameOver}
-                  clearActionLog={clearActionLog}
-                />
               </CardContent>
             </Card>
           )}
@@ -130,6 +121,12 @@ function App() {
             players={players}
             currentTurn={currentTurn}
             turnOrder={turnOrder}
+            setAssigned={setAssigned}
+            setTurnOrder={setTurnOrder}
+            setCurrentTurn={setCurrentTurn}
+            setPlayers={setPlayers}
+            setGameOver={setGameOver}
+            clearActionLog={clearActionLog}
           />
         </div>
       </div>
