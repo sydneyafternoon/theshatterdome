@@ -103,7 +103,7 @@ function ActionLog({ actionLog }) {
               No actions taken yet
             </p>
           ) : (
-            actionLog.slice(-15).map((entry, idx) => (
+            actionLog.map((entry, idx) => (
               <div key={idx} className="text-sm p-2 bg-muted/50 rounded">
                 <div className="font-medium">
                   {formatActionMessage(entry.action)}
