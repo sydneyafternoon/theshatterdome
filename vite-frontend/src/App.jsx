@@ -6,6 +6,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SpellCasting from "./components/SpellCasting.jsx";
+import GameOverCard from "./components/GameOverCard.jsx";
 import ActionLog from "./components/ActionLog.jsx";
 import AssignedCharacters from "./components/AssignedCharacters.jsx";
 import { useActionLog } from "./hooks/useActionLog.js";
@@ -16,6 +17,7 @@ function App() {
   const [turnOrder, setTurnOrder] = useState([]);
   const [currentTurn, setCurrentTurn] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [winner, setWinner] = useState(null);
   const { actionLog, addAction, clearActionLog } = useActionLog();
 
   const handleNameChange = (idx, value) => {
@@ -95,7 +97,7 @@ function App() {
             </Card>
           )}
 
-          {turnOrder.length > 0 && (
+          {turnOrder.length > 0 && !gameOver && (
             <Card>
               <CardContent className="pt-6">
                 <SpellCasting
@@ -104,14 +106,16 @@ function App() {
                   setTurnOrder={setTurnOrder}
                   setAssigned={setAssigned}
                   setCurrentTurn={setCurrentTurn}
-                  gameOver={gameOver}
                   setGameOver={setGameOver}
+                  setWinner={setWinner}
                   addAction={addAction}
                   onTurnEnd={endTurn}
                 />
               </CardContent>
             </Card>
           )}
+
+          {gameOver && <GameOverCard winner={winner} />}
         </div>
 
         {/* Right Column - Assigned Characters */}
